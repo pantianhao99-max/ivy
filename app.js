@@ -679,7 +679,6 @@ function renderPageDocument() {
   document.title = dashboardDocument.title;
   if (heroSummary) {
     heroSummary.textContent = "";
-    queueTypewriter(heroSummary, dashboardDocument.heroSummary, 18, 220);
   }
   renderMarkdownInto(
     overviewHeading,
