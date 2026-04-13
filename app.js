@@ -1,8 +1,17 @@
 ﻿const stressMode = new URLSearchParams(window.location.search).has("stress");
 const memberPlaceholderAvatar = "./assets/member-placeholder.png";
-const reportBaseDate = new Date("2026-06-01T20:00:00+08:00");
+function formatReportDate(date) {
+  return date.toLocaleDateString("zh-CN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  });
+}
+
+const reportBaseDate = new Date();
 const reportContext = {
-  reportTimeLabel: "\u62a5\u544a\u65f6\u95f4\uff1a2026\u5e746\u67081\u65e5\uff0c\u4e0b\u534820:00",
+  reportTimeLabel: `\u62a5\u544a\u65f6\u95f4\uff1a${formatReportDate(reportBaseDate)}`,
   annualTarget: 30000000,
   achieved: 10000000,
   teamRate: 10000000 / 30000000,
@@ -241,17 +250,15 @@ const dashboardDocument = {
     chatInputLabel: "输入问题",
     chatPlaceholder: "例如：今年目标还差多少？哪些 B 级客户超过 15 天未跟进？",
   },
-  heroSummary: `报告时间：2026年6月1日，下午20:00。**当前年度目标已完成 ${Math.round(
-    reportContext.teamRate * 100
-  )}%**，本月回款与商机推进保持同步，3 个月完成 ${formatCompactCurrency(
+  heroSummary: `**年度达成 ${Math.round(reportContext.teamRate * 100)}%** · **已完成 ${formatCompactCurrency(
     reportContext.achieved
-  )}，阶段超额完成；若把商机池补足到安全线以上，全年有望冲到 ${formatCompactCurrency(
-    reportContext.forecastPotential
-  )}。`,
+  )}** · **商机缺口 ${formatCompactCurrency(
+    reportContext.opportunityGap
+  )}** · **风险项 ${reportContext.highRiskItems}**`,
   sections: {
     overview: {
       heading: "综合统计",
-      intro: "先看年度进度、商机缺口和风险暴露，快速判断今天该把火力放在哪。",
+      intro: "",
       metrics: [
         {
           prefix: "🎯",
@@ -278,42 +285,36 @@ const dashboardDocument = {
         {
           titlePrefix: "📊",
           title: "业绩达成",
-          body: `阶段已经超额完成，3 个月累计完成 ${formatCompactCurrency(
+          body: `**年度目标：** ${formatCompactCurrency(reportContext.annualTarget)} / 年。**当前达成：** ${formatCompactCurrency(
             reportContext.achieved
-          )}。**年度目标：** ${formatCompactCurrency(reportContext.annualTarget)} / 年。**当前达成：** ${formatCompactCurrency(
-            reportContext.achieved
-          )}。**节奏判断：** 阶段性表现明显好于年初预期。`,
+          )}。**达成率：** ${Math.round(reportContext.teamRate * 100)}%。`,
         },
         {
           titlePrefix: "🧭",
           title: "商机与线索",
-          body: `如果本月把商机池补足到安全线以上，全年业绩有望冲到 ${formatCompactCurrency(
-            reportContext.forecastPotential
-          )}。**线索池：** 充足，新增速度和转化率能够支撑本月节奏。**商机池：** 预计成交 ${formatCompactCurrency(
+          body: `**线索池：** ${reportContext.newQualifiedLeads} 个有效线索。**商机池：** 预计成交 ${formatCompactCurrency(
             reportContext.opportunityPool
           )}，仍缺口 ${formatCompactCurrency(reportContext.opportunityGap)}。**本月丢单：** ${reportContext.monthlyLostDeals} 单。`,
         },
         {
           titlePrefix: "👥",
           title: "客户与团队",
-          body: `**A 级客户：** 跟进频率正常，但贡献占比仍然偏低。**B 级客户：** 目前有 ${reportContext.overdueBLevelCustomers} 个超 15 天未跟进。**团队强度：** 平均每人每天跟进 ${reportContext.averageDailyTouches} 次客户。**重点关注：** ${reportContext.focusMembers.join(
-            " 和 "
-          )} 的业绩进度低于团队平均。`,
+          body: `**A 级客户：** 跟进频率正常。**B 级客户：** ${reportContext.overdueBLevelCustomers} 个超 15 天未跟进。**团队强度：** 平均每人每天跟进 ${reportContext.averageDailyTouches} 次。**重点关注：** ${reportContext.focusMembers.join(" / ")}。`,
         },
         {
           titlePrefix: "✅",
           title: "下一步重点",
-          body: `${reportContext.nextPriorities.map((item) => `- ${item}`).join("\n")}`,
+          body: `${reportContext.nextPriorities.slice(0, 3).map((item) => `- ${item}`).join("\n")}`,
         },
       ],
     },
     member: {
       heading: "成员业绩",
-      intro: "只保留需要被管理者快速比较的人与进度。",
+      intro: "",
     },
     risk: {
       heading: "风险预警",
-      intro: "聚焦真正需要介入的异常，不把一般性说明继续堆成第二层。",
+      intro: "",
       cards: [
         {
           titlePrefix: "🚧",
@@ -344,7 +345,7 @@ const dashboardDocument = {
     },
     crm: {
       heading: "客户商机详情",
-      intro: "这一层负责下钻核查，保留总表与分表来定位客户、负责人和推进节点。",
+      intro: "",
       tables: [
         {
           id: "crmOverallTableHead",
@@ -595,28 +596,28 @@ function renderPageDocument() {
   renderMarkdownInto(
     overviewHeading,
     dashboardDocument.sections.overview.heading
-      ? `## ${dashboardDocument.sections.overview.heading}\n${dashboardDocument.sections.overview.intro}`
+      ? `## ${dashboardDocument.sections.overview.heading}${dashboardDocument.sections.overview.intro ? `\n${dashboardDocument.sections.overview.intro}` : ""}`
       : dashboardDocument.sections.overview.intro,
     "panel-heading-prose card-markdown"
   );
   renderMarkdownInto(
     memberHeading,
     dashboardDocument.sections.member.heading
-      ? `## ${dashboardDocument.sections.member.heading}\n${dashboardDocument.sections.member.intro}`
+      ? `## ${dashboardDocument.sections.member.heading}${dashboardDocument.sections.member.intro ? `\n${dashboardDocument.sections.member.intro}` : ""}`
       : dashboardDocument.sections.member.intro,
     "panel-heading-prose card-markdown"
   );
   renderMarkdownInto(
     riskHeading,
     dashboardDocument.sections.risk.heading
-      ? `## ${dashboardDocument.sections.risk.heading}\n${dashboardDocument.sections.risk.intro}`
+      ? `## ${dashboardDocument.sections.risk.heading}${dashboardDocument.sections.risk.intro ? `\n${dashboardDocument.sections.risk.intro}` : ""}`
       : dashboardDocument.sections.risk.intro,
     "panel-heading-prose card-markdown"
   );
   renderMarkdownInto(
     crmHeading,
     dashboardDocument.sections.crm.heading
-      ? `## ${dashboardDocument.sections.crm.heading}\n${dashboardDocument.sections.crm.intro}`
+      ? `## ${dashboardDocument.sections.crm.heading}${dashboardDocument.sections.crm.intro ? `\n${dashboardDocument.sections.crm.intro}` : ""}`
       : dashboardDocument.sections.crm.intro,
     "panel-heading-prose card-markdown"
   );
@@ -1064,7 +1065,7 @@ function renderCrmHeaders() {
 }
 
 function initializeDate() {
-  applySelectedDate(shiftDate(today, -1), -1);
+  applySelectedDate(today, null);
 
   if (dateShortcuts) {
     dateShortcuts.addEventListener("click", (event) => {
