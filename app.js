@@ -781,31 +781,8 @@ function renderPageDocument() {
   queueStreamReveal(riskSection, 1320);
   queueStreamReveal(crmSection, 1760);
 
-  queueTypewriter(heroTitle, dashboardDocument.ui.heroTitle, 24, 120);
-  queueTypewriter(
-    overviewHeading?.querySelector("h2"),
-    dashboardDocument.sections.overview.heading,
-    34,
-    520
-  );
-  queueTypewriter(
-    memberHeading?.querySelector("h2"),
-    dashboardDocument.sections.member.heading,
-    34,
-    980
-  );
-  queueTypewriter(
-    riskHeading?.querySelector("h2"),
-    dashboardDocument.sections.risk.heading,
-    34,
-    1380
-  );
-  queueTypewriter(
-    crmHeading?.querySelector("h2"),
-    dashboardDocument.sections.crm.heading,
-    34,
-    1820
-  );
+  queueTypewriter(heroTitle, dashboardDocument.ui.heroTitle, 30, 160);
+  queueTypewriter(heroSummary, dashboardDocument.heroSummary, 22, 420);
 }
 
 function getStats() {
@@ -980,7 +957,6 @@ function renderMembersRefined() {
     });
     memberAlignedRows.appendChild(card);
     queueStreamReveal(card, 420 + index * 120);
-    queueTypewriter(card.querySelector(".card-title-text"), member.name, 22, 860 + index * 180);
   });
 }
 
@@ -997,7 +973,6 @@ function renderRiskBoard() {
     });
     riskBoard.appendChild(card);
     queueStreamReveal(card, 360 + index * 140);
-    queueTypewriter(card.querySelector(".card-title-text"), risk.title, 22, 1080 + index * 180);
   });
 }
 
@@ -1178,7 +1153,6 @@ function renderCrmHeaders() {
   headers.forEach(([titleElement, titleText, target, columns], index) => {
     if (titleElement) {
       titleElement.textContent = titleText;
-      queueTypewriter(titleElement, titleText, 24, 160 + index * 180);
     }
 
     if (!target) {
@@ -1307,8 +1281,6 @@ function renderOverviewRichtext() {
     });
     overviewMetrics.appendChild(card);
     queueStreamReveal(card, 420 + index * 100);
-    queueTypewriter(card.querySelector(".card-title-text"), metric.label, 24, 700 + index * 140);
-    queueTypewriter(card.querySelector(".card-value"), metric.value, 30, 860 + index * 140);
   });
 
   teamDailyList.replaceChildren();
@@ -1320,7 +1292,6 @@ function renderOverviewRichtext() {
     });
     teamDailyList.appendChild(card);
     queueStreamReveal(card, 780 + index * 140);
-    queueTypewriter(card.querySelector(".card-title-text"), cardData.title, 24, 1180 + index * 160);
   });
 }
 
