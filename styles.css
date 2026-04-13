@@ -811,7 +811,7 @@ body::before {
 .metric-grid .card-title {
   font-size: var(--card-title-size);
   font-weight: 560;
-  color: #3f3b36;
+  color: #1f1c18;
 }
 
 .metric-grid .card-value {
