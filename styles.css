@@ -405,7 +405,7 @@ body::before {
   min-width: 0;
 }
 
-.panel-heading-prose h2 {
+.panel-heading-prose.card-markdown h2 {
   font-size: 24px;
   font-weight: 640;
   display: inline-flex;
@@ -414,7 +414,7 @@ body::before {
   color: #191613;
 }
 
-.panel-heading-prose h2::before {
+.panel-heading-prose.card-markdown h2::before {
   content: "";
   width: 20px;
   height: 2px;
