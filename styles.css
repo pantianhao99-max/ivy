@@ -993,14 +993,20 @@ th {
 .table-wrap {
   overflow: auto;
   border: 1px solid rgba(17, 17, 17, 0.1);
-  border-radius: var(--card-radius);
+  border-radius: 14px;
   background: #ffffff;
   box-shadow: none;
 }
 
 .crm-sections {
   display: grid;
-  gap: 18px;
+  gap: 14px;
+}
+
+.crm-block {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
 }
 
 .crm-sections .card-header h3 {
@@ -1008,7 +1014,7 @@ th {
   align-items: center;
   gap: 10px;
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   line-height: var(--ui-heading-line);
   font-weight: 620;
   letter-spacing: -0.015em;
