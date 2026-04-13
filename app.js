@@ -250,7 +250,7 @@ const dashboardDocument = {
   )}。`,
   sections: {
     overview: {
-      heading: "团队统计",
+      heading: "综合统计",
       intro: "先看年度进度、商机缺口和风险暴露，快速判断今天该把火力放在哪。",
       metrics: [
         {
@@ -274,48 +274,38 @@ const dashboardDocument = {
           note: `商机 ${reportContext.stalledOpportunities} / B 级客户 ${reportContext.overdueBLevelCustomers} / 头部依赖 1`,
         },
       ],
-      report: `# 📊 经营判断
-
-阶段已经超额完成，3 个月累计完成 ${formatCompactCurrency(
-    reportContext.achieved
-  )}。如果本月把商机池补足到安全线以上，全年业绩有望冲到 ${formatCompactCurrency(
-    reportContext.forecastPotential
-  )}。
-
----
-
-## 业绩达成情况
-
-- **年度目标：** ${formatCompactCurrency(reportContext.annualTarget)} / 年
-- **当前达成：** ${formatCompactCurrency(reportContext.achieved)}
-- **节奏判断：** 阶段性表现明显好于年初预期
-- **管理重点：** 当前不缺结果，缺的是后续商机储备
-
----
-
-## 商机与线索情况
-
-- **线索池：** 充足，新增速度和转化率能够支撑本月节奏
-- **商机池：** 预计成交 ${formatCompactCurrency(
-        reportContext.opportunityPool
-      )}，仍缺口 ${formatCompactCurrency(reportContext.opportunityGap)}
-- **本月丢单：** ${reportContext.monthlyLostDeals} 单
-- **重点动作：** 本月至少补齐 ${reportContext.requiredNewLeads} 个有效线索
-
----
-
-## 客户与团队情况
-
-- **A 级客户：** 跟进频率正常，但贡献占比仍然偏低
-- **B 级客户：** 目前有 ${reportContext.overdueBLevelCustomers} 个超 15 天未跟进
-- **团队强度：** 平均每人每天跟进 ${reportContext.averageDailyTouches} 次客户
-- **重点关注：** ${reportContext.focusMembers.join(" 和 ")} 的业绩进度低于团队平均
-
----
-
-## 下一步管理重点
-
-${reportContext.nextPriorities.map((item) => `- ${item}`).join("\n")}`,
+      cards: [
+        {
+          titlePrefix: "📊",
+          title: "业绩达成",
+          body: `阶段已经超额完成，3 个月累计完成 ${formatCompactCurrency(
+            reportContext.achieved
+          )}。**年度目标：** ${formatCompactCurrency(reportContext.annualTarget)} / 年。**当前达成：** ${formatCompactCurrency(
+            reportContext.achieved
+          )}。**节奏判断：** 阶段性表现明显好于年初预期。`,
+        },
+        {
+          titlePrefix: "🧭",
+          title: "商机与线索",
+          body: `如果本月把商机池补足到安全线以上，全年业绩有望冲到 ${formatCompactCurrency(
+            reportContext.forecastPotential
+          )}。**线索池：** 充足，新增速度和转化率能够支撑本月节奏。**商机池：** 预计成交 ${formatCompactCurrency(
+            reportContext.opportunityPool
+          )}，仍缺口 ${formatCompactCurrency(reportContext.opportunityGap)}。**本月丢单：** ${reportContext.monthlyLostDeals} 单。`,
+        },
+        {
+          titlePrefix: "👥",
+          title: "客户与团队",
+          body: `**A 级客户：** 跟进频率正常，但贡献占比仍然偏低。**B 级客户：** 目前有 ${reportContext.overdueBLevelCustomers} 个超 15 天未跟进。**团队强度：** 平均每人每天跟进 ${reportContext.averageDailyTouches} 次客户。**重点关注：** ${reportContext.focusMembers.join(
+            " 和 "
+          )} 的业绩进度低于团队平均。`,
+        },
+        {
+          titlePrefix: "✅",
+          title: "下一步重点",
+          body: `${reportContext.nextPriorities.map((item) => `- ${item}`).join("\n")}`,
+        },
+      ],
     },
     member: {
       heading: "成员业绩",
@@ -1190,11 +1180,16 @@ function renderOverviewRichtext() {
     );
   });
 
-  renderSectionNarrative(
-    teamDailyList,
-    dashboardDocument.sections.overview.report,
-    "section-richtext-prose card-markdown"
-  );
+  teamDailyList.replaceChildren();
+  dashboardDocument.sections.overview.cards.forEach((cardData) => {
+    teamDailyList.appendChild(
+      createStandardCard({
+        titlePrefix: cardData.titlePrefix,
+        title: cardData.title,
+        body: cardData.body,
+      })
+    );
+  });
 }
 
 function initialize() {

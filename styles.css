@@ -836,6 +836,10 @@ body::before {
   margin: 0;
 }
 
+.section-richtext.narrative-summary {
+  gap: 10px;
+}
+
 .section-richtext.is-empty {
   display: none;
 }
@@ -844,6 +848,10 @@ body::before {
   width: 100%;
   max-width: none;
   padding: 0;
+}
+
+.section-richtext.narrative-summary .card-standard {
+  margin: 0;
 }
 
 .section-richtext-prose h1,
