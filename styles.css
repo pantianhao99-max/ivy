@@ -454,7 +454,7 @@ body::before {
   font-weight: 560;
   line-height: 1.24;
   letter-spacing: -0.015em;
-  color: #3f3b36;
+  color: #1f1c18;
 }
 
 .card-title-prefix {
@@ -1008,7 +1008,7 @@ th {
   line-height: var(--ui-heading-line);
   font-weight: 620;
   letter-spacing: -0.015em;
-  color: #181818;
+  color: #111111;
 }
 
 .crm-sections .card-header h3::before {
