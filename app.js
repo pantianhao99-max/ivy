@@ -250,11 +250,9 @@ const dashboardDocument = {
     chatInputLabel: "输入问题",
     chatPlaceholder: "例如：今年目标还差多少？哪些 B 级客户超过 15 天未跟进？",
   },
-  heroSummary: `**年度达成 ${Math.round(reportContext.teamRate * 100)}%** · **已完成 ${formatCompactCurrency(
+  heroSummary: `年度达成 ${Math.round(reportContext.teamRate * 100)}% · 已完成 ${formatCompactCurrency(
     reportContext.achieved
-  )}** · **商机缺口 ${formatCompactCurrency(
-    reportContext.opportunityGap
-  )}** · **风险项 ${reportContext.highRiskItems}**`,
+  )} · 商机缺口 ${formatCompactCurrency(reportContext.opportunityGap)} · 风险项 ${reportContext.highRiskItems}`,
   sections: {
     overview: {
       heading: "综合统计",
@@ -416,6 +414,9 @@ const crmSection = document.getElementById("crmSection");
 
 const streamRevealQueue = [];
 let streamRevealCounter = 0;
+const typewriterQueue = [];
+let typewriterCounter = 0;
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function queueStreamReveal(element, delay = null) {
   if (!element) {
@@ -437,6 +438,59 @@ function playStreamReveal() {
         element.classList.add("is-visible");
       }, delay);
     });
+  });
+}
+
+function queueTypewriter(element, text, speed = 26, delay = null) {
+  if (!element || !text) {
+    return;
+  }
+
+  const startDelay = delay ?? typewriterCounter * 120;
+  typewriterCounter += 1;
+  typewriterQueue.push({ element, text: String(text), speed, delay: startDelay });
+}
+
+function typeText(element, text, speed = 26) {
+  if (!element) {
+    return;
+  }
+
+  const finalText = String(text);
+  if (prefersReducedMotion) {
+    element.textContent = finalText;
+    return;
+  }
+
+  element.textContent = "";
+  element.classList.add("typewriter-active");
+  let index = 0;
+
+  const tick = () => {
+    index += 1;
+    element.textContent = finalText.slice(0, index);
+    if (index < finalText.length) {
+      window.setTimeout(tick, speed);
+    } else {
+      element.classList.remove("typewriter-active");
+    }
+  };
+
+  window.setTimeout(tick, speed);
+}
+
+function playTypewriter() {
+  if (prefersReducedMotion) {
+    typewriterQueue.forEach(({ element, text }) => {
+      element.textContent = text;
+    });
+    return;
+  }
+
+  typewriterQueue.forEach(({ element, text, speed, delay }) => {
+    window.setTimeout(() => {
+      typeText(element, text, speed);
+    }, delay);
   });
 }
 
@@ -623,7 +677,10 @@ function renderPageDocument() {
   }
 
   document.title = dashboardDocument.title;
-  renderMarkdownInto(heroSummary, dashboardDocument.heroSummary, "hero-summary-prose card-markdown");
+  if (heroSummary) {
+    heroSummary.textContent = "";
+    queueTypewriter(heroSummary, dashboardDocument.heroSummary, 18, 220);
+  }
   renderMarkdownInto(
     overviewHeading,
     dashboardDocument.sections.overview.heading
@@ -723,6 +780,32 @@ function renderPageDocument() {
   queueStreamReveal(memberSection, 880);
   queueStreamReveal(riskSection, 1320);
   queueStreamReveal(crmSection, 1760);
+
+  queueTypewriter(heroTitle, dashboardDocument.ui.heroTitle, 24, 120);
+  queueTypewriter(
+    overviewHeading?.querySelector("h2"),
+    dashboardDocument.sections.overview.heading,
+    34,
+    520
+  );
+  queueTypewriter(
+    memberHeading?.querySelector("h2"),
+    dashboardDocument.sections.member.heading,
+    34,
+    980
+  );
+  queueTypewriter(
+    riskHeading?.querySelector("h2"),
+    dashboardDocument.sections.risk.heading,
+    34,
+    1380
+  );
+  queueTypewriter(
+    crmHeading?.querySelector("h2"),
+    dashboardDocument.sections.crm.heading,
+    34,
+    1820
+  );
 }
 
 function getStats() {
@@ -787,7 +870,7 @@ function createStandardCard({
       if (titlePrefix) {
         titleElement.appendChild(createElement("span", "card-title-prefix", titlePrefix));
       }
-      titleElement.appendChild(document.createTextNode(title));
+      titleElement.appendChild(createElement("span", "card-title-text", title));
       text.appendChild(titleElement);
     }
 
@@ -897,6 +980,7 @@ function renderMembersRefined() {
     });
     memberAlignedRows.appendChild(card);
     queueStreamReveal(card, 420 + index * 120);
+    queueTypewriter(card.querySelector(".card-title-text"), member.name, 22, 860 + index * 180);
   });
 }
 
@@ -913,6 +997,7 @@ function renderRiskBoard() {
     });
     riskBoard.appendChild(card);
     queueStreamReveal(card, 360 + index * 140);
+    queueTypewriter(card.querySelector(".card-title-text"), risk.title, 22, 1080 + index * 180);
   });
 }
 
@@ -1079,23 +1164,23 @@ function renderCrmHeaders() {
   const [overallTable, customerTable, opportunityTable] =
     dashboardDocument.sections.crm.tables;
 
-  if (crmOverallTitle) {
-    crmOverallTitle.textContent = overallTable.title;
-  }
-  if (crmCustomerTitle) {
-    crmCustomerTitle.textContent = customerTable.title;
-  }
-  if (crmOpportunityTitle) {
-    crmOpportunityTitle.textContent = opportunityTable.title;
-  }
-
   const headers = [
-    [crmOverallTableHead, overallTable.columns],
-    [crmCustomerTableHead, customerTable.columns],
-    [crmOpportunityTableHead, opportunityTable.columns],
+    [crmOverallTitle, overallTable.title, crmOverallTableHead, overallTable.columns],
+    [crmCustomerTitle, customerTable.title, crmCustomerTableHead, customerTable.columns],
+    [
+      crmOpportunityTitle,
+      opportunityTable.title,
+      crmOpportunityTableHead,
+      opportunityTable.columns,
+    ],
   ];
 
-  headers.forEach(([target, columns]) => {
+  headers.forEach(([titleElement, titleText, target, columns], index) => {
+    if (titleElement) {
+      titleElement.textContent = titleText;
+      queueTypewriter(titleElement, titleText, 24, 160 + index * 180);
+    }
+
     if (!target) {
       return;
     }
@@ -1222,6 +1307,8 @@ function renderOverviewRichtext() {
     });
     overviewMetrics.appendChild(card);
     queueStreamReveal(card, 420 + index * 100);
+    queueTypewriter(card.querySelector(".card-title-text"), metric.label, 24, 700 + index * 140);
+    queueTypewriter(card.querySelector(".card-value"), metric.value, 30, 860 + index * 140);
   });
 
   teamDailyList.replaceChildren();
@@ -1233,6 +1320,7 @@ function renderOverviewRichtext() {
     });
     teamDailyList.appendChild(card);
     queueStreamReveal(card, 780 + index * 140);
+    queueTypewriter(card.querySelector(".card-title-text"), cardData.title, 24, 1180 + index * 160);
   });
 }
 
@@ -1245,6 +1333,7 @@ function initialize() {
   renderCrmHeaders();
   renderCrmTable();
   setupChat();
+  playTypewriter();
   playStreamReveal();
 
   addMessage(
