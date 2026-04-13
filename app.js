@@ -408,6 +408,37 @@ const chatToggle = document.getElementById("chatToggle");
 const chatClose = document.getElementById("chatClose");
 const chatForm = document.getElementById("chatForm");
 const chatWidgetTitle = document.getElementById("chatWidgetTitle");
+const statusOverviewSection = document.getElementById("statusOverviewSection");
+const overviewSection = document.getElementById("overviewSection");
+const memberSection = document.getElementById("memberSection");
+const riskSection = document.getElementById("riskSection");
+const crmSection = document.getElementById("crmSection");
+
+const streamRevealQueue = [];
+let streamRevealCounter = 0;
+
+function queueStreamReveal(element, delay = null) {
+  if (!element) {
+    return;
+  }
+
+  const streamDelay = delay ?? streamRevealCounter * 110;
+  streamRevealCounter += 1;
+  element.classList.add("stream-reveal");
+  element.style.setProperty("--stream-delay", `${streamDelay}ms`);
+  streamRevealQueue.push(element);
+}
+
+function playStreamReveal() {
+  requestAnimationFrame(() => {
+    streamRevealQueue.forEach((element) => {
+      const delay = Number.parseFloat(element.style.getPropertyValue("--stream-delay")) || 0;
+      window.setTimeout(() => {
+        element.classList.add("is-visible");
+      }, delay);
+    });
+  });
+}
 
 function formatCompactNumber(value) {
   if (Math.abs(value) >= 10000) {
@@ -683,6 +714,15 @@ function renderPageDocument() {
       label.textContent = dashboardDocument.ui.chatInputLabel;
     }
   }
+
+  queueStreamReveal(statusOverviewSection, 0);
+  queueStreamReveal(heroTitle?.closest(".hero-main"), 80);
+  queueStreamReveal(document.querySelector(".hero-top-meta"), 180);
+  queueStreamReveal(heroSummary, 280);
+  queueStreamReveal(overviewSection, 380);
+  queueStreamReveal(memberSection, 880);
+  queueStreamReveal(riskSection, 1320);
+  queueStreamReveal(crmSection, 1760);
 }
 
 function getStats() {
@@ -833,46 +873,46 @@ function renderMembersRefined() {
 
   memberAlignedRows.replaceChildren();
 
-  rankedMembers.forEach((member) => {
+  rankedMembers.forEach((member, index) => {
     const ratio = member.achieved / member.target;
     const gap = Math.max(member.target - member.achieved, 0);
-    memberAlignedRows.appendChild(
-      createStandardCard({
-        title: member.name,
-        subtitle: member.role,
-        tagText: member.tagText,
-        tagClass: member.tagClass,
-        avatarSrc: member.avatar || memberPlaceholderAvatar,
-        avatarAlt: `${member.name} \u5934\u50cf`,
-        value: formatCompactCurrency(member.achieved),
-        note: `\u5e74\u5ea6\u76ee\u6807 ${formatCompactCurrency(
-          member.target
-        )}\uff0c\u76ee\u6807\u7f3a\u53e3 ${formatCompactCurrency(gap)}`,
-        chartValue: `${Math.round(ratio * 100)}%`,
-        chartRatio: ratio,
-        chartLabel: "\u8fbe\u6210\u7387",
-        chartClass: member.tagClass,
-        supportMarkdown: `${member.dailySummary}\n\n**\u4eca\u65e5\u52a8\u4f5c**\n\n${member.todayTasks
-          .map((task) => `- ${task}`)
-          .join("\n")}`,
-      })
-    );
+    const card = createStandardCard({
+      title: member.name,
+      subtitle: member.role,
+      tagText: member.tagText,
+      tagClass: member.tagClass,
+      avatarSrc: member.avatar || memberPlaceholderAvatar,
+      avatarAlt: `${member.name} \u5934\u50cf`,
+      value: formatCompactCurrency(member.achieved),
+      note: `\u5e74\u5ea6\u76ee\u6807 ${formatCompactCurrency(
+        member.target
+      )}\uff0c\u76ee\u6807\u7f3a\u53e3 ${formatCompactCurrency(gap)}`,
+      chartValue: `${Math.round(ratio * 100)}%`,
+      chartRatio: ratio,
+      chartLabel: "\u8fbe\u6210\u7387",
+      chartClass: member.tagClass,
+      supportMarkdown: `${member.dailySummary}\n\n**\u4eca\u65e5\u52a8\u4f5c**\n\n${member.todayTasks
+        .map((task) => `- ${task}`)
+        .join("\n")}`,
+    });
+    memberAlignedRows.appendChild(card);
+    queueStreamReveal(card, 420 + index * 120);
   });
 }
 
 function renderRiskBoard() {
   riskBoard.replaceChildren();
 
-  dashboardDocument.sections.risk.cards.forEach((risk) => {
-    riskBoard.appendChild(
-      createStandardCard({
-        titlePrefix: risk.titlePrefix,
-        title: risk.title,
-        tagText: risk.tag,
-        tagClass: risk.level,
-        body: risk.summary,
-      })
-    );
+  dashboardDocument.sections.risk.cards.forEach((risk, index) => {
+    const card = createStandardCard({
+      titlePrefix: risk.titlePrefix,
+      title: risk.title,
+      tagText: risk.tag,
+      tagClass: risk.level,
+      body: risk.summary,
+    });
+    riskBoard.appendChild(card);
+    queueStreamReveal(card, 360 + index * 140);
   });
 }
 
@@ -907,6 +947,7 @@ function renderCrmTable() {
     );
 
     crmOverallTableBody.appendChild(overallRow);
+    queueStreamReveal(overallRow);
 
     const customerRow = document.createElement("tr");
     [
@@ -920,6 +961,7 @@ function renderCrmTable() {
       customerRow.appendChild(createElement("td", "", value));
     });
     crmCustomerTableBody.appendChild(customerRow);
+    queueStreamReveal(customerRow);
 
     const opportunityRow = document.createElement("tr");
     [
@@ -942,6 +984,7 @@ function renderCrmTable() {
       )
     );
     crmOpportunityTableBody.appendChild(opportunityRow);
+    queueStreamReveal(opportunityRow);
   });
 }
 
@@ -1170,26 +1213,26 @@ function renderOverviewRichtext() {
   const cards = dashboardDocument.sections.overview.metrics;
 
   overviewMetrics.replaceChildren();
-  cards.forEach((metric) => {
-    overviewMetrics.appendChild(
-      createStandardCard({
-        titlePrefix: metric.prefix,
-        title: metric.label,
-        value: metric.value,
-        note: metric.note,
-      })
-    );
+  cards.forEach((metric, index) => {
+    const card = createStandardCard({
+      titlePrefix: metric.prefix,
+      title: metric.label,
+      value: metric.value,
+      note: metric.note,
+    });
+    overviewMetrics.appendChild(card);
+    queueStreamReveal(card, 420 + index * 100);
   });
 
   teamDailyList.replaceChildren();
-  dashboardDocument.sections.overview.cards.forEach((cardData) => {
-    teamDailyList.appendChild(
-      createStandardCard({
-        titlePrefix: cardData.titlePrefix,
-        title: cardData.title,
-        body: cardData.body,
-      })
-    );
+  dashboardDocument.sections.overview.cards.forEach((cardData, index) => {
+    const card = createStandardCard({
+      titlePrefix: cardData.titlePrefix,
+      title: cardData.title,
+      body: cardData.body,
+    });
+    teamDailyList.appendChild(card);
+    queueStreamReveal(card, 780 + index * 140);
   });
 }
 
@@ -1202,6 +1245,7 @@ function initialize() {
   renderCrmHeaders();
   renderCrmTable();
   setupChat();
+  playStreamReveal();
 
   addMessage(
     "assistant",

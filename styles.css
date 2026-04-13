@@ -165,6 +165,27 @@ body::before {
   white-space: normal;
 }
 
+.stream-reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(2px);
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease,
+    filter 420ms ease;
+  will-change: opacity, transform, filter;
+}
+
+.stream-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+tr.stream-reveal {
+  transform: translateY(6px);
+}
+
 .eyebrow,
 .panel-tag {
   margin: 0 0 8px;
