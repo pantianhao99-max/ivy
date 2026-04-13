@@ -243,15 +243,15 @@ const dashboardDocument = {
   },
   heroSummary: `报告时间：2026年6月1日，下午20:00。**当前年度目标已完成 ${Math.round(
     reportContext.teamRate * 100
-  )}%**，3 个月完成 ${formatCompactCurrency(
+  )}%**，本月回款与商机推进保持同步，3 个月完成 ${formatCompactCurrency(
     reportContext.achieved
-  )}，阶段超额完成；若商机池补足，全年有望冲到 ${formatCompactCurrency(
+  )}，阶段超额完成；若把商机池补足到安全线以上，全年有望冲到 ${formatCompactCurrency(
     reportContext.forecastPotential
   )}。`,
   sections: {
     overview: {
       heading: "团队统计",
-      intro: "围绕目标达成、商机池缺口和关键风险，先判断经营盘面。",
+      intro: "先看年度进度、商机缺口和风险暴露，快速判断今天该把火力放在哪。",
       metrics: [
         {
           prefix: "🎯",
@@ -274,7 +274,7 @@ const dashboardDocument = {
           note: `商机 ${reportContext.stalledOpportunities} / B 级客户 ${reportContext.overdueBLevelCustomers} / 头部依赖 1`,
         },
       ],
-      report: `# 经营判断
+      report: `# 📊 经营判断
 
 阶段已经超额完成，3 个月累计完成 ${formatCompactCurrency(
     reportContext.achieved
@@ -288,14 +288,14 @@ const dashboardDocument = {
 
 - **年度目标：** ${formatCompactCurrency(reportContext.annualTarget)} / 年
 - **当前达成：** ${formatCompactCurrency(reportContext.achieved)}
-- **达成分析：** 阶段性表现明显好于年初预期
-- **管理判断：** 当前不缺结果，缺的是后续商机储备
+- **节奏判断：** 阶段性表现明显好于年初预期
+- **管理重点：** 当前不缺结果，缺的是后续商机储备
 
 ---
 
 ## 商机与线索情况
 
-- **线索池：** 充足，当前新增速度和转化率能够支撑本月节奏
+- **线索池：** 充足，新增速度和转化率能够支撑本月节奏
 - **商机池：** 预计成交 ${formatCompactCurrency(
         reportContext.opportunityPool
       )}，仍缺口 ${formatCompactCurrency(reportContext.opportunityGap)}
