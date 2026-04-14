@@ -300,9 +300,9 @@ const salesActivities = stressMode
     ];
 
 const dashboardDocument = {
-  title: "Ivy 销售团队看板",
+  title: "销售团队看板",
   ui: {
-    heroTitle: "Ivy 销售团队看板",
+    heroTitle: "销售团队看板",
     dateCardLabel: "查看日期",
     datePickerAriaLabel: "选择日期",
     dateShortcutsAriaLabel: "快速切换日期",
