@@ -1359,7 +1359,7 @@ function setupPageTabs() {
     button.addEventListener("click", () => {
       const tabName = button.dataset.pageTab || "team";
       setPageView(tabName);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
     });
   });
 
