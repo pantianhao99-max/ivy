@@ -15,6 +15,12 @@
   <body>
     <div class="app-shell">
       <main class="main-content">
+        <nav class="section-tabs" id="sectionTabs" role="tablist" aria-label="页面切换">
+          <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-page-tab="home">首页</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="table">全量客户与商机表</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="activity">销售动态</button>
+        </nav>
+
         <header class="hero" id="statusOverviewSection">
           <div class="hero-main">
             <div class="hero-title-row">
@@ -35,12 +41,6 @@
           </div>
           <div class="hero-summary" id="heroSummary"></div>
         </header>
-
-        <nav class="section-tabs" id="sectionTabs" role="tablist" aria-label="页面切换">
-          <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-page-tab="home">首页</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="table">全量客户与商机表</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="activity">销售动态</button>
-        </nav>
 
         <div class="dashboard-grid">
           <section class="panel panel-overview" id="overviewSection">
