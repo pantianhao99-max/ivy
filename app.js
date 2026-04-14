@@ -468,7 +468,7 @@ const crmOpportunityTitle = document.getElementById("crmOpportunityTitle");
 const crmOverallTableBody = document.getElementById("crmOverallTableBody");
 const crmCustomerTableBody = document.getElementById("crmCustomerTableBody");
 const crmOpportunityTableBody = document.getElementById("crmOpportunityTableBody");
-const crmTabButtons = document.querySelectorAll("[data-crm-tab]");
+const sectionTabButtons = document.querySelectorAll("[data-section-tab]");
 const crmPanels = document.querySelectorAll("[data-crm-panel]");
 const crmFullTitle = document.getElementById("crmFullTitle");
 const crmFullHead = document.getElementById("crmFullHead");
@@ -489,6 +489,8 @@ const overviewSection = document.getElementById("overviewSection");
 const memberSection = document.getElementById("memberSection");
 const riskSection = document.getElementById("riskSection");
 const crmSection = document.getElementById("crmSection");
+let activeSectionTab = "overview";
+let activeCrmTab = "detail";
 
 const streamRevealQueue = [];
 let streamRevealCounter = 0;
@@ -1321,11 +1323,7 @@ function renderSalesActivities() {
 }
 
 function setCrmTab(tabName) {
-  crmTabButtons.forEach((button) => {
-    const isActive = button.dataset.crmTab === tabName;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-selected", String(isActive));
-  });
+  activeCrmTab = tabName;
 
   crmPanels.forEach((panel) => {
     const isActive = panel.dataset.crmPanel === tabName;
@@ -1334,14 +1332,76 @@ function setCrmTab(tabName) {
   });
 }
 
-function setupCrmTabs() {
-  crmTabButtons.forEach((button) => {
+function syncSectionTabState(tabName) {
+  activeSectionTab = tabName;
+  sectionTabButtons.forEach((button) => {
+    const isActive = button.dataset.sectionTab === tabName;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+}
+
+function setupSectionTabs() {
+  const sectionMap = {
+    overview: { target: overviewSection },
+    member: { target: memberSection },
+    risk: { target: riskSection },
+    "crm-detail": { target: crmSection, crmTab: "detail" },
+    "crm-full": { target: crmSection, crmTab: "full" },
+    "crm-activity": { target: crmSection, crmTab: "activity" },
+  };
+
+  sectionTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      setCrmTab(button.dataset.crmTab || "detail");
+      const tabName = button.dataset.sectionTab || "overview";
+      const config = sectionMap[tabName];
+      if (!config) {
+        return;
+      }
+
+      if (config.crmTab) {
+        setCrmTab(config.crmTab);
+      }
+
+      syncSectionTabState(tabName);
+      config.target?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 
-  setCrmTab("detail");
+  syncSectionTabState(activeSectionTab);
+  setCrmTab(activeCrmTab);
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (!visibleEntry) {
+          return;
+        }
+
+        if (visibleEntry.target === overviewSection) {
+          syncSectionTabState("overview");
+        } else if (visibleEntry.target === memberSection) {
+          syncSectionTabState("member");
+        } else if (visibleEntry.target === riskSection) {
+          syncSectionTabState("risk");
+        } else if (visibleEntry.target === crmSection) {
+          syncSectionTabState(`crm-${activeCrmTab}`);
+        }
+      },
+      {
+        threshold: [0.2, 0.45, 0.7],
+        rootMargin: "-20% 0px -55% 0px",
+      }
+    );
+
+    [overviewSection, memberSection, riskSection, crmSection]
+      .filter(Boolean)
+      .forEach((section) => observer.observe(section));
+  }
 }
 
 function initializeDate() {
@@ -1483,7 +1543,7 @@ function initialize() {
   renderCrmTable();
   renderCrmFullTable();
   renderSalesActivities();
-  setupCrmTabs();
+  setupSectionTabs();
   setupChat();
   playTypewriter();
   playStreamReveal();

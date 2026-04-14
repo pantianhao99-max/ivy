@@ -36,6 +36,15 @@
           <div class="hero-summary" id="heroSummary"></div>
         </header>
 
+        <nav class="section-tabs" id="sectionTabs" role="tablist" aria-label="页面分区切换">
+          <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-section-tab="overview">综合统计</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="member">成员业绩</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="risk">风险预警</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="crm-detail">客户商机详情</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="crm-full">全量客户与商机表</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="crm-activity">销售动态</button>
+        </nav>
+
         <div class="dashboard-grid">
           <section class="panel panel-overview" id="overviewSection">
             <div class="panel-header">
@@ -68,11 +77,6 @@
           <section class="panel panel-crm" id="crmSection">
             <div class="panel-header">
               <div id="crmHeading" class="panel-heading-richtext"></div>
-            </div>
-            <div class="crm-tabs" role="tablist" aria-label="客户商机视图切换">
-              <button class="crm-tab is-active" type="button" role="tab" aria-selected="true" data-crm-tab="detail">客户商机详情</button>
-              <button class="crm-tab" type="button" role="tab" aria-selected="false" data-crm-tab="full">全量客户与商机表</button>
-              <button class="crm-tab" type="button" role="tab" aria-selected="false" data-crm-tab="activity">销售动态</button>
             </div>
             <div class="crm-panels">
               <section class="crm-panel is-active" data-crm-panel="detail" role="tabpanel">
