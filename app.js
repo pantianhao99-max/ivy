@@ -1336,16 +1336,20 @@ function setPageView(tabName) {
   const isTeam = tabName === "team";
   if (dashboardGrid) {
     dashboardGrid.hidden = !isTeam;
+    dashboardGrid.style.display = isTeam ? "" : "none";
     dashboardGrid.setAttribute("aria-hidden", String(!isTeam));
   }
   if (statusOverviewSection) {
     statusOverviewSection.hidden = !isTeam;
+    statusOverviewSection.style.display = isTeam ? "" : "none";
   }
   if (tablePage) {
     tablePage.hidden = tabName !== "table";
+    tablePage.style.display = tabName === "table" ? "" : "none";
   }
   if (activityPage) {
     activityPage.hidden = tabName !== "activity";
+    activityPage.style.display = tabName === "activity" ? "" : "none";
   }
   syncPageTabState(tabName);
 }
