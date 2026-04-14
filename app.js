@@ -413,7 +413,7 @@ const dashboardDocument = {
     crm: {
       heading: "客户商机详情",
       intro: "",
-      fullTitle: "全量客户与商机表",
+      fullTitle: "商机表",
       activityTitle: "销售动态",
       tables: [
         {
@@ -491,7 +491,7 @@ const overviewSection = document.getElementById("overviewSection");
 const memberSection = document.getElementById("memberSection");
 const riskSection = document.getElementById("riskSection");
 const crmSection = document.getElementById("crmSection");
-let activePageTab = "home";
+let activePageTab = "team";
 
 const streamRevealQueue = [];
 let streamRevealCounter = 0;
@@ -1333,9 +1333,13 @@ function syncPageTabState(tabName) {
 }
 
 function setPageView(tabName) {
-  const isHome = tabName === "home";
+  const isTeam = tabName === "team";
   if (dashboardGrid) {
-    dashboardGrid.hidden = !isHome;
+    dashboardGrid.hidden = !isTeam;
+    dashboardGrid.setAttribute("aria-hidden", String(!isTeam));
+  }
+  if (statusOverviewSection) {
+    statusOverviewSection.hidden = !isTeam;
   }
   if (tablePage) {
     tablePage.hidden = tabName !== "table";
@@ -1349,7 +1353,7 @@ function setPageView(tabName) {
 function setupPageTabs() {
   pageTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      const tabName = button.dataset.pageTab || "home";
+      const tabName = button.dataset.pageTab || "team";
       setPageView(tabName);
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
