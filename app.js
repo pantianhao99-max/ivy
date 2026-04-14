@@ -468,8 +468,10 @@ const crmOpportunityTitle = document.getElementById("crmOpportunityTitle");
 const crmOverallTableBody = document.getElementById("crmOverallTableBody");
 const crmCustomerTableBody = document.getElementById("crmCustomerTableBody");
 const crmOpportunityTableBody = document.getElementById("crmOpportunityTableBody");
-const sectionTabButtons = document.querySelectorAll("[data-section-tab]");
-const crmPanels = document.querySelectorAll("[data-crm-panel]");
+const pageTabButtons = document.querySelectorAll("[data-page-tab]");
+const dashboardGrid = document.querySelector(".dashboard-grid");
+const tablePage = document.getElementById("tablePage");
+const activityPage = document.getElementById("activityPage");
 const crmFullTitle = document.getElementById("crmFullTitle");
 const crmFullHead = document.getElementById("crmFullHead");
 const crmFullTableBody = document.getElementById("crmFullTableBody");
@@ -489,8 +491,7 @@ const overviewSection = document.getElementById("overviewSection");
 const memberSection = document.getElementById("memberSection");
 const riskSection = document.getElementById("riskSection");
 const crmSection = document.getElementById("crmSection");
-let activeSectionTab = "overview";
-let activeCrmTab = "detail";
+let activePageTab = "home";
 
 const streamRevealQueue = [];
 let streamRevealCounter = 0;
@@ -1322,86 +1323,39 @@ function renderSalesActivities() {
   });
 }
 
-function setCrmTab(tabName) {
-  activeCrmTab = tabName;
-
-  crmPanels.forEach((panel) => {
-    const isActive = panel.dataset.crmPanel === tabName;
-    panel.classList.toggle("is-active", isActive);
-    panel.hidden = !isActive;
-  });
-}
-
-function syncSectionTabState(tabName) {
-  activeSectionTab = tabName;
-  sectionTabButtons.forEach((button) => {
-    const isActive = button.dataset.sectionTab === tabName;
+function syncPageTabState(tabName) {
+  activePageTab = tabName;
+  pageTabButtons.forEach((button) => {
+    const isActive = button.dataset.pageTab === tabName;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-selected", String(isActive));
   });
 }
 
-function setupSectionTabs() {
-  const sectionMap = {
-    overview: { target: overviewSection },
-    member: { target: memberSection },
-    risk: { target: riskSection },
-    "crm-detail": { target: crmSection, crmTab: "detail" },
-    "crm-full": { target: crmSection, crmTab: "full" },
-    "crm-activity": { target: crmSection, crmTab: "activity" },
-  };
+function setPageView(tabName) {
+  const isHome = tabName === "home";
+  if (dashboardGrid) {
+    dashboardGrid.hidden = !isHome;
+  }
+  if (tablePage) {
+    tablePage.hidden = tabName !== "table";
+  }
+  if (activityPage) {
+    activityPage.hidden = tabName !== "activity";
+  }
+  syncPageTabState(tabName);
+}
 
-  sectionTabButtons.forEach((button) => {
+function setupPageTabs() {
+  pageTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      const tabName = button.dataset.sectionTab || "overview";
-      const config = sectionMap[tabName];
-      if (!config) {
-        return;
-      }
-
-      if (config.crmTab) {
-        setCrmTab(config.crmTab);
-      }
-
-      syncSectionTabState(tabName);
-      config.target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const tabName = button.dataset.pageTab || "home";
+      setPageView(tabName);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
 
-  syncSectionTabState(activeSectionTab);
-  setCrmTab(activeCrmTab);
-
-  if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleEntry = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (!visibleEntry) {
-          return;
-        }
-
-        if (visibleEntry.target === overviewSection) {
-          syncSectionTabState("overview");
-        } else if (visibleEntry.target === memberSection) {
-          syncSectionTabState("member");
-        } else if (visibleEntry.target === riskSection) {
-          syncSectionTabState("risk");
-        } else if (visibleEntry.target === crmSection) {
-          syncSectionTabState(`crm-${activeCrmTab}`);
-        }
-      },
-      {
-        threshold: [0.2, 0.45, 0.7],
-        rootMargin: "-20% 0px -55% 0px",
-      }
-    );
-
-    [overviewSection, memberSection, riskSection, crmSection]
-      .filter(Boolean)
-      .forEach((section) => observer.observe(section));
-  }
+  setPageView(activePageTab);
 }
 
 function initializeDate() {
@@ -1543,7 +1497,7 @@ function initialize() {
   renderCrmTable();
   renderCrmFullTable();
   renderSalesActivities();
-  setupSectionTabs();
+  setupPageTabs();
   setupChat();
   playTypewriter();
   playStreamReveal();

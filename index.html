@@ -36,13 +36,10 @@
           <div class="hero-summary" id="heroSummary"></div>
         </header>
 
-        <nav class="section-tabs" id="sectionTabs" role="tablist" aria-label="页面分区切换">
-          <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-section-tab="overview">综合统计</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="member">成员业绩</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="risk">风险预警</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="crm-detail">客户商机详情</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="crm-full">全量客户与商机表</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-section-tab="crm-activity">销售动态</button>
+        <nav class="section-tabs" id="sectionTabs" role="tablist" aria-label="页面切换">
+          <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-page-tab="home">首页</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="table">全量客户与商机表</button>
+          <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="activity">销售动态</button>
         </nav>
 
         <div class="dashboard-grid">
@@ -78,80 +75,78 @@
             <div class="panel-header">
               <div id="crmHeading" class="panel-heading-richtext"></div>
             </div>
-            <div class="crm-panels">
-              <section class="crm-panel is-active" data-crm-panel="detail" role="tabpanel">
-                <div class="crm-sections">
-                  <section class="crm-block">
-                    <div class="card-header">
-                      <h3 id="crmOverallTitle"></h3>
-                    </div>
-                    <div class="table-wrap">
-                      <table>
-                        <thead>
-                          <tr id="crmOverallHead"></tr>
-                        </thead>
-                        <tbody id="crmOverallTableBody"></tbody>
-                      </table>
-                    </div>
-                  </section>
-
-                  <section class="crm-block">
-                    <div class="card-header">
-                      <h3 id="crmCustomerTitle"></h3>
-                    </div>
-                    <div class="table-wrap">
-                      <table>
-                        <thead>
-                          <tr id="crmCustomerHead"></tr>
-                        </thead>
-                        <tbody id="crmCustomerTableBody"></tbody>
-                      </table>
-                    </div>
-                  </section>
-
-                  <section class="crm-block">
-                    <div class="card-header">
-                      <h3 id="crmOpportunityTitle"></h3>
-                    </div>
-                    <div class="table-wrap">
-                      <table>
-                        <thead>
-                          <tr id="crmOpportunityHead"></tr>
-                        </thead>
-                        <tbody id="crmOpportunityTableBody"></tbody>
-                      </table>
-                    </div>
-                  </section>
+            <div class="crm-sections">
+              <section class="crm-block">
+                <div class="card-header">
+                  <h3 id="crmOverallTitle"></h3>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr id="crmOverallHead"></tr>
+                    </thead>
+                    <tbody id="crmOverallTableBody"></tbody>
+                  </table>
                 </div>
               </section>
 
-              <section class="crm-panel" data-crm-panel="full" role="tabpanel" hidden>
-                <div class="crm-block">
-                  <div class="card-header">
-                    <h3 id="crmFullTitle">全量客户与商机表</h3>
-                  </div>
-                  <div class="table-wrap">
-                    <table>
-                      <thead>
-                        <tr id="crmFullHead"></tr>
-                      </thead>
-                      <tbody id="crmFullTableBody"></tbody>
-                    </table>
-                  </div>
+              <section class="crm-block">
+                <div class="card-header">
+                  <h3 id="crmCustomerTitle"></h3>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr id="crmCustomerHead"></tr>
+                    </thead>
+                    <tbody id="crmCustomerTableBody"></tbody>
+                  </table>
                 </div>
               </section>
 
-              <section class="crm-panel" data-crm-panel="activity" role="tabpanel" hidden>
-                <div class="crm-block">
-                  <div class="card-header">
-                    <h3 id="salesActivityTitle">销售动态</h3>
-                  </div>
-                  <div id="salesActivityFeed" class="activity-feed" aria-live="polite"></div>
+              <section class="crm-block">
+                <div class="card-header">
+                  <h3 id="crmOpportunityTitle"></h3>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr id="crmOpportunityHead"></tr>
+                    </thead>
+                    <tbody id="crmOpportunityTableBody"></tbody>
+                  </table>
                 </div>
               </section>
             </div>
           </section>
         </div>
+
+        <section class="page-panel" id="tablePage" hidden aria-label="全量客户与商机表">
+          <div class="page-panel-header">
+            <div>
+              <p class="eyebrow">页面 TAB</p>
+              <h2 id="crmFullTitle">全量客户与商机表</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr id="crmFullHead"></tr>
+              </thead>
+              <tbody id="crmFullTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="page-panel" id="activityPage" hidden aria-label="销售动态">
+          <div class="page-panel-header">
+            <div>
+              <p class="eyebrow">页面 TAB</p>
+              <h2 id="salesActivityTitle">销售动态</h2>
+            </div>
+          </div>
+          <div id="salesActivityFeed" class="activity-feed" aria-live="polite"></div>
+        </section>
       </main>
     </div>
 
