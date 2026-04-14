@@ -230,6 +230,75 @@ const crmRecords = stressMode
     }))
   : baseCrmRecords;
 
+const salesActivities = stressMode
+  ? [
+      {
+        time: "09:12",
+        tag: "合同回传",
+        level: "safe",
+        title: "Ava 推进星炬制造合同复核",
+        body: "法务已回传修订版，补充了签署页与回款节点，预计今日完成最终确认。",
+      },
+      {
+        time: "10:40",
+        tag: "商机推进",
+        level: "focus",
+        title: "Mia 更新医疗行业方案演示",
+        body: "客户侧已确认演示窗口，当前重点是把采购、业务和 IT 三方的关注点对齐。",
+      },
+      {
+        time: "13:15",
+        tag: "风险跟进",
+        level: "warn",
+        title: "Lina 重新激活两个停滞商机",
+        body: "其中一个项目已超过 15 天未更新，已补充下一次会议时间和决策人名单。",
+      },
+      {
+        time: "15:20",
+        tag: "丢单复盘",
+        level: "warn",
+        title: "Joe 补充本月丢单原因记录",
+        body: "主要集中在预算审批延迟和业务侧未明确下一步目标，已转入复盘列表。",
+      },
+    ]
+  : [
+      {
+        time: "09:08",
+        tag: "签约推进",
+        level: "safe",
+        title: "Ava 完成星炬制造条款确认",
+        body: "客户已确认付款节点，法务版本进入最终审核，预计今天下午可完成回传。",
+      },
+      {
+        time: "10:26",
+        tag: "方案评审",
+        level: "focus",
+        title: "Mia 向泰和医疗补充演示材料",
+        body: "采购与业务部门已参加评审，当前等待 IT 安全项补充说明。",
+      },
+      {
+        time: "12:14",
+        tag: "重点跟进",
+        level: "warn",
+        title: "Lina 更新北辰零售商机状态",
+        body: "该项目已超过 15 天未更新，已补发会议纪要并锁定下次沟通时间。",
+      },
+      {
+        time: "14:55",
+        tag: "团队复盘",
+        level: "focus",
+        title: "Joe 提交渠道会员系统复盘",
+        body: "本轮卡点集中在预算确认和回款节点，下一步改为先推进 POC 结果确认。",
+      },
+      {
+        time: "16:40",
+        tag: "日报同步",
+        level: "safe",
+        title: "团队完成今日销售简报更新",
+        body: "客户商机、风险与跟进动作已同步到日报，便于晚间例会直接复盘。",
+      },
+    ];
+
 const dashboardDocument = {
   title: "Ivy 销售团队看板",
   ui: {
@@ -344,6 +413,8 @@ const dashboardDocument = {
     crm: {
       heading: "客户商机详情",
       intro: "",
+      fullTitle: "全量客户与商机表",
+      activityTitle: "销售动态",
       tables: [
         {
           id: "crmOverallTableHead",
@@ -397,6 +468,13 @@ const crmOpportunityTitle = document.getElementById("crmOpportunityTitle");
 const crmOverallTableBody = document.getElementById("crmOverallTableBody");
 const crmCustomerTableBody = document.getElementById("crmCustomerTableBody");
 const crmOpportunityTableBody = document.getElementById("crmOpportunityTableBody");
+const crmTabButtons = document.querySelectorAll("[data-crm-tab]");
+const crmPanels = document.querySelectorAll("[data-crm-panel]");
+const crmFullTitle = document.getElementById("crmFullTitle");
+const crmFullHead = document.getElementById("crmFullHead");
+const crmFullTableBody = document.getElementById("crmFullTableBody");
+const salesActivityTitle = document.getElementById("salesActivityTitle");
+const salesActivityFeed = document.getElementById("salesActivityFeed");
 const chatMessages = document.getElementById("chatMessages");
 const chatInput = document.getElementById("chatInput");
 const chatSubmit = document.getElementById("chatSubmit");
@@ -1138,6 +1216,13 @@ function renderCrmHeaders() {
   const [overallTable, customerTable, opportunityTable] =
     dashboardDocument.sections.crm.tables;
 
+  if (crmFullTitle) {
+    crmFullTitle.textContent = dashboardDocument.sections.crm.fullTitle;
+  }
+  if (salesActivityTitle) {
+    salesActivityTitle.textContent = dashboardDocument.sections.crm.activityTitle;
+  }
+
   const headers = [
     [crmOverallTitle, overallTable.title, crmOverallTableHead, overallTable.columns],
     [crmCustomerTitle, customerTable.title, crmCustomerTableHead, customerTable.columns],
@@ -1163,6 +1248,100 @@ function renderCrmHeaders() {
       target.appendChild(createElement("th", "", column));
     });
   });
+}
+
+function renderCrmFullTable() {
+  if (!crmFullHead || !crmFullTableBody) {
+    return;
+  }
+
+  crmFullHead.replaceChildren();
+  [
+    "客户",
+    "商机",
+    "负责人",
+    "客户分层",
+    "阶段",
+    "跟进状态",
+    "预计成交",
+    "最近跟进",
+    "风险",
+    "备注",
+  ].forEach((column) => {
+    crmFullHead.appendChild(createElement("th", "", column));
+  });
+
+  crmFullTableBody.replaceChildren();
+  crmRecords.forEach((record, index) => {
+    const row = document.createElement("tr");
+    [
+      record.customer,
+      record.opportunity,
+      record.owner,
+      record.tier,
+      record.stage,
+      record.followupStatus,
+      formatCompactCurrency(record.estRevenue),
+      record.lastFollowup,
+      record.risk,
+      `${record.customerRisk} / ${record.opportunityRisk}`,
+    ].forEach((value, cellIndex) => {
+      const cell = createElement("td", "", value);
+      if (cellIndex === 8) {
+        cell.className = `risk-level ${record.risk === "高" ? "high" : record.risk === "中" ? "medium" : "low"}`;
+      }
+      row.appendChild(cell);
+    });
+    crmFullTableBody.appendChild(row);
+    queueStreamReveal(row, 160 + index * 110);
+  });
+}
+
+function renderSalesActivities() {
+  if (!salesActivityFeed) {
+    return;
+  }
+
+  salesActivityFeed.replaceChildren();
+  salesActivities.forEach((activity, index) => {
+    const item = createElement("article", "activity-item card-standard");
+    const meta = createElement("div", "activity-meta");
+    meta.appendChild(createElement("span", "activity-time", activity.time));
+    meta.appendChild(createElement("span", `activity-tag ${activity.level}`, activity.tag));
+
+    const title = createElement("h4", "activity-title", activity.title);
+    const body = createElement("p", "activity-body", activity.body);
+
+    item.appendChild(meta);
+    item.appendChild(title);
+    item.appendChild(body);
+    salesActivityFeed.appendChild(item);
+    queueStreamReveal(item, 140 + index * 120);
+  });
+}
+
+function setCrmTab(tabName) {
+  crmTabButtons.forEach((button) => {
+    const isActive = button.dataset.crmTab === tabName;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  crmPanels.forEach((panel) => {
+    const isActive = panel.dataset.crmPanel === tabName;
+    panel.classList.toggle("is-active", isActive);
+    panel.hidden = !isActive;
+  });
+}
+
+function setupCrmTabs() {
+  crmTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setCrmTab(button.dataset.crmTab || "detail");
+    });
+  });
+
+  setCrmTab("detail");
 }
 
 function initializeDate() {
@@ -1302,6 +1481,9 @@ function initialize() {
   renderRiskBoard();
   renderCrmHeaders();
   renderCrmTable();
+  renderCrmFullTable();
+  renderSalesActivities();
+  setupCrmTabs();
   setupChat();
   playTypewriter();
   playStreamReveal();
