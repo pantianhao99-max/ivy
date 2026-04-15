@@ -234,107 +234,263 @@ const crmRecords = stressMode
     }))
   : baseCrmRecords;
 
+const crmBoardRows = [
+  {
+    customer: "星河制造",
+    status: "新增",
+    level: "S级",
+    entityType: "company",
+    tags: ["S级", "制造", "张三"],
+    opportunities: [
+      {
+        title: "协同平台二期",
+        tags: ["方案对齐", "4月", "500万"],
+      },
+    ],
+    winBlocks: [
+      {
+        rate: 50,
+        summary: "POC 已过，预算待对齐。",
+      },
+    ],
+    recentFollowup: {
+      time: "3天前",
+      note: "已对齐验收口径。",
+    },
+    nextFollowups: [
+      {
+        time: "明天 9:00",
+        note: "发结果说明。",
+      },
+      {
+        time: "本周三 10:00",
+        note: "补一次答疑。",
+      },
+    ],
+    updatedAt: "2026-04-14T09:10:00",
+  },
+  {
+    customer: "智联医疗",
+    status: "新增",
+    level: "A级",
+    entityType: "company",
+    tags: ["A级", "医疗", "李四"],
+    opportunities: [
+      {
+        title: "质检 AI 平台",
+        tags: ["合同对齐", "4月", "500万"],
+      },
+    ],
+    winBlocks: [
+      {
+        rate: 80,
+        summary: "法务已收口，交付边界待确认。",
+      },
+    ],
+    recentFollowup: {
+      time: "10天前",
+      note: "已确认评审窗口。",
+    },
+    nextFollowups: [
+      {
+        time: "明天 9:00",
+        note: "发测试计划。",
+      },
+      {
+        time: "本周四 14:00",
+        note: "补技术答疑。",
+      },
+      {
+        time: "本周五 10:00",
+        note: "发测试结论。",
+        done: true,
+      },
+    ],
+    updatedAt: "2026-04-13T17:30:00",
+  },
+  {
+    customer: "李琳",
+    status: "",
+    level: "A级",
+    entityType: "person",
+    tags: ["A级", "个人客户"],
+    opportunities: [
+      {
+        title: "资产配置方案",
+        tags: ["方案对齐", "4月", "500万"],
+      },
+    ],
+    winBlocks: [
+      {
+        rate: 50,
+        summary: "客户在意回撤，继续推进沟通。",
+      },
+    ],
+    recentFollowup: {
+      time: "1天前",
+      note: "已沟通近期走势。",
+    },
+    nextFollowups: [
+      {
+        time: "后天 9:00",
+        note: "发业绩摘要。",
+      },
+    ],
+    updatedAt: "2026-04-12T19:40:00",
+  },
+  {
+    customer: "云图装备",
+    status: "",
+    level: "B级",
+    entityType: "company",
+    tags: ["B级", "制造", "李五"],
+    opportunities: [
+      {
+        title: "物联监控平台",
+        tags: ["需求确认", "4月", "500万"],
+      },
+    ],
+    winBlocks: [
+      {
+        rate: 50,
+        summary: "需求已确认，审批还差一轮。",
+      },
+    ],
+    recentFollowup: {
+      time: "3天前",
+      note: "已对齐测试结果。",
+    },
+    nextFollowups: [
+      {
+        time: "下周三",
+        note: "确认评审时间。",
+      },
+    ],
+    updatedAt: "2026-04-11T15:10:00",
+  },
+  {
+    customer: "陈昊",
+    status: "",
+    level: "C级",
+    entityType: "person",
+    tags: ["C级", "个人客户"],
+    opportunities: [],
+    winBlocks: [],
+    recentFollowup: null,
+    nextFollowups: [
+      {
+        time: "逾期5天",
+        note: "补发资料，确认是否继续。",
+        overdue: true,
+      },
+    ],
+    updatedAt: "2026-04-10T10:05:00",
+  },
+  {
+    customer: "星辰科技",
+    status: "",
+    level: "D级",
+    entityType: "company",
+    tags: ["D级"],
+    opportunities: [],
+    winBlocks: [],
+    recentFollowup: null,
+    nextFollowups: [],
+    updatedAt: "2026-04-09T08:35:00",
+  },
+].map((row) => ({
+  ...row,
+  searchText: [
+    row.customer,
+    row.status,
+    row.level,
+    row.tags.join(" "),
+    row.opportunities.map((item) => `${item.title} ${item.tags.join(" ")} ${item.moreLabel || ""}`).join(" "),
+    row.winBlocks.map((item) => item.summary).join(" "),
+    row.recentFollowup ? `${row.recentFollowup.time} ${row.recentFollowup.note}` : "",
+    row.nextFollowups.map((item) => `${item.time} ${item.note}`).join(" "),
+  ]
+    .join(" ")
+    .toLowerCase(),
+}));
+
 const salesActivities = stressMode
   ? [
-      {
-        time: "18:22",
-        person: "Ava",
-        target: "星炬制造 / 智造协同平台二期",
-        action: "修改状态备注：法务已回传修订版，补充签署页与回款节点，待销售确认后归档。",
-      },
-      {
-        time: "17:36",
-        person: "Mia",
-        target: "泰和医疗 / 重点客户经营平台",
-        action: "新建跟进：已确认演示窗口，采购、业务和 IT 三方关注点已同步。",
-      },
-      {
-        time: "16:48",
-        person: "Lina",
-        target: "北辰零售 / 渠道会员系统",
-        action: "修改状态备注：补充下一次会议时间与决策人名单，等待客户侧确认。",
-      },
-      {
-        time: "15:32",
-        person: "Joe",
-        target: "海辰教育 / 校园招采系统",
-        action: "完成跟进：预算审批延迟与业务目标不清晰已记录为复盘原因。",
-      },
-      {
-        time: "14:05",
-        person: "Ava",
-        target: "星炬制造 / 智造协同平台二期",
-        action: "上传文件：回款计划表已同步给财务并附回传确认截图。",
-      },
-      {
-        time: "12:44",
-        person: "Mia",
-        target: "泰和医疗 / 重点客户经营平台",
-        action: "修改状态备注：演示材料已补充采购关注点，等待二次评审。",
-      },
-      {
-        time: "11:18",
-        person: "Lina",
-        target: "北辰零售 / 渠道会员系统",
-        action: "新建跟进：补录上周会议纪要，客户仍在内部讨论。",
-      },
-      {
-        time: "09:06",
-        person: "Joe",
-        target: "山川物流 / 运输协同平台",
-        action: "修改状态备注：更新今日排期与待办，确认下午复盘。",
-      },
+      { date: "2026-04-14", time: "18:22", person: "Ava", target: "星河制造 / 协同平台二期", action: "修改状态：法务版已回传。" },
+      { date: "2026-04-14", time: "17:36", person: "Mia", target: "智联医疗 / 质检 AI 平台", action: "新建跟进：确认了演示窗口。" },
+      { date: "2026-04-14", time: "16:48", person: "Lina", target: "云图装备 / 物联监控平台", action: "修改状态：补了下次会议时间。" },
+      { date: "2026-04-14", time: "15:32", person: "Joe", target: "陈昊 / 资产配置方案", action: "完成跟进：记录待确认事项。" },
+      { date: "2026-04-13", time: "14:05", person: "Ava", target: "星河制造 / 协同平台二期", action: "上传文件：补了会议纪要。" },
+      { date: "2026-04-13", time: "12:44", person: "Mia", target: "智联医疗 / 质检 AI 平台", action: "修改状态：材料已更新。" },
+      { date: "2026-04-13", time: "11:18", person: "Lina", target: "云图装备 / 物联监控平台", action: "新建跟进：补录上周纪要。" },
+      { date: "2026-04-13", time: "09:06", person: "Joe", target: "陈昊 / 资产配置方案", action: "修改状态：更新今日待办。" },
+      { date: "2026-04-12", time: "18:18", person: "Ava", target: "星河制造 / 协同平台二期", action: "完成跟进：已确认付款节点。" },
+      { date: "2026-04-12", time: "16:20", person: "Mia", target: "智联医疗 / 质检 AI 平台", action: "上传文件：补了材料最新版。" },
+      { date: "2026-04-11", time: "15:46", person: "Lina", target: "云图装备 / 物联监控平台", action: "修改状态：锁定了评审时间。" },
+      { date: "2026-04-11", time: "10:12", person: "Joe", target: "陈昊 / 资产配置方案", action: "新建跟进：待办已同步。" },
     ]
   : [
-      {
-        time: "18:11",
-        person: "Ava",
-        target: "星炬制造 / 智造协同平台二期",
-        action: "修改状态备注：客户已确认付款节点，法务版本进入最终审核。",
-      },
-      {
-        time: "17:40",
-        person: "Mia",
-        target: "泰和医疗 / 重点客户经营平台",
-        action: "上传文件：补充了 IT 安全项说明和演示材料最新版。",
-      },
-      {
-        time: "16:28",
-        person: "Lina",
-        target: "北辰零售 / 渠道会员系统",
-        action: "完成跟进：已补发会议纪要并锁定下次沟通时间。",
-      },
-      {
-        time: "15:19",
-        person: "Joe",
-        target: "山川物流 / 运输协同平台",
-        action: "修改状态备注：卡点集中在预算确认和回款节点，已转入复盘。",
-      },
-      {
-        time: "13:52",
-        person: "Ava",
-        target: "星炬制造 / 智造协同平台二期",
-        action: "新建跟进：首付款节点已确认，财务同步了回款计划。",
-      },
-      {
-        time: "12:37",
-        person: "Mia",
-        target: "泰和医疗 / 重点客户经营平台",
-        action: "上传文件：补充采购关注点附件，等待二次评审安排。",
-      },
-      {
-        time: "11:06",
-        person: "Lina",
-        target: "海辰教育 / 校园招采系统",
-        action: "修改状态备注：补录上周会议纪要，客户仍在内部讨论。",
-      },
-      {
-        time: "09:14",
-        person: "Joe",
-        target: "山川物流 / 运输协同平台",
-        action: "新建跟进：客户商机、风险与待办已同步到日志。",
-      },
+      { date: "2026-04-14", time: "18:11", person: "Ava", target: "星河制造 / 协同平台二期", action: "修改状态：付款节点已确认。" },
+      { date: "2026-04-14", time: "17:40", person: "Mia", target: "智联医疗 / 质检 AI 平台", action: "上传文件：补了材料最新版。" },
+      { date: "2026-04-14", time: "16:28", person: "Lina", target: "云图装备 / 物联监控平台", action: "完成跟进：锁定下次沟通时间。" },
+      { date: "2026-04-14", time: "15:19", person: "Joe", target: "陈昊 / 资产配置方案", action: "修改状态：卡点已记录。" },
+      { date: "2026-04-13", time: "13:52", person: "Ava", target: "星河制造 / 协同平台二期", action: "新建跟进：回款计划已同步。" },
+      { date: "2026-04-13", time: "12:37", person: "Mia", target: "智联医疗 / 质检 AI 平台", action: "上传文件：补了采购关注点。" },
+      { date: "2026-04-13", time: "11:06", person: "Lina", target: "云图装备 / 物联监控平台", action: "修改状态：补录了上周纪要。" },
+      { date: "2026-04-13", time: "09:14", person: "Joe", target: "陈昊 / 资产配置方案", action: "新建跟进：待办已同步。" },
+      { date: "2026-04-12", time: "18:05", person: "Ava", target: "星河制造 / 协同平台二期", action: "完成跟进：整理了客户反馈。" },
+      { date: "2026-04-12", time: "15:56", person: "Mia", target: "智联医疗 / 质检 AI 平台", action: "修改状态：材料已更新。" },
+      { date: "2026-04-11", time: "14:22", person: "Lina", target: "云图装备 / 物联监控平台", action: "上传文件：发了演示录屏。" },
+      { date: "2026-04-10", time: "10:03", person: "Joe", target: "陈昊 / 资产配置方案", action: "新建跟进：补录了回访要点。" },
     ];
+
+let adminAccounts = [
+  {
+    id: "ava",
+    name: "Ava",
+    username: "Ava Chen",
+    contactType: "phone",
+    contactValue: "13800138001",
+    points: 286,
+    lastActive: "今天 09:12",
+  },
+  {
+    id: "mia",
+    name: "Mia",
+    username: "Mia Liu",
+    contactType: "email",
+    contactValue: "mia@company.com",
+    points: 248,
+    lastActive: "今天 08:48",
+  },
+  {
+    id: "lina",
+    name: "Lina",
+    username: "Lina Zhang",
+    contactType: "phone",
+    contactValue: "13900139001",
+    points: 214,
+    lastActive: "昨天 18:07",
+  },
+  {
+    id: "joe",
+    name: "Joe",
+    username: "Joe Wu",
+    contactType: "email",
+    contactValue: "joe@company.com",
+    points: 176,
+    lastActive: "昨天 16:21",
+  },
+  {
+    id: "sara",
+    name: "Sara",
+    username: "Sara Wang",
+    contactType: "phone",
+    contactValue: "13700137001",
+    points: 198,
+    lastActive: "今天 11:05",
+  },
+];
 
 const dashboardDocument = {
   title: "销售团队看板",
@@ -476,6 +632,13 @@ let selectedRangeStart = new Date(today);
 let selectedRangeEnd = new Date(today);
 let activeTimeScope = "day";
 let customRangeOpen = false;
+let customRangeTarget = "report";
+let salesActivitySortDescending = true;
+let salesActivitySearchTerm = "";
+let salesActivityRangeStart = null;
+let salesActivityRangeEnd = null;
+let crmBoardRangeStart = null;
+let crmBoardRangeEnd = null;
 const rangeStartPicker = document.getElementById("rangeStartPicker");
 const rangeEndPicker = document.getElementById("rangeEndPicker");
 const applyRangeButton = document.getElementById("applyRangeButton");
@@ -511,8 +674,36 @@ const tablePage = document.getElementById("tablePage");
 const activityPage = document.getElementById("activityPage");
 const crmFullHead = document.getElementById("crmFullHead");
 const crmFullTableBody = document.getElementById("crmFullTableBody");
+const crmBoardSortButton = document.getElementById("crmBoardSortButton");
+const crmBoardSearchInput = document.getElementById("crmBoardSearchInput");
+const crmBoardFilterButton = document.getElementById("crmBoardFilterButton");
+const crmBoardMoreButton = document.getElementById("crmBoardMoreButton");
+const crmBoardDateButton = document.getElementById("crmBoardDateButton");
+const salesActivitySortButton = document.getElementById("salesActivitySortButton");
+const salesActivityDateButton = document.getElementById("salesActivityDateButton");
+const salesActivitySearchInput = document.getElementById("salesActivitySearchInput");
+const salesActivityFilterButton = document.getElementById("salesActivityFilterButton");
+const salesActivityMoreButton = document.getElementById("salesActivityMoreButton");
 const salesActivityFeed = document.getElementById("salesActivityFeed");
 const salesActivityHead = document.getElementById("salesActivityHead");
+const adminPanelButton = document.getElementById("adminPanelButton");
+const adminModal = document.getElementById("adminModal");
+const adminModalBackdrop = document.getElementById("adminModalBackdrop");
+const adminModalClose = document.getElementById("adminModalClose");
+const adminRefreshButton = document.getElementById("adminRefreshButton");
+const adminTableBody = document.getElementById("adminTableBody");
+const adminAccountSummary = document.getElementById("adminAccountSummary");
+const adminEditModal = document.getElementById("adminEditModal");
+const adminEditBackdrop = document.getElementById("adminEditBackdrop");
+const adminEditClose = document.getElementById("adminEditClose");
+const adminEditSummary = document.getElementById("adminEditSummary");
+const adminEditTypeGroup = document.getElementById("adminEditTypeGroup");
+const adminEditContactInput = document.getElementById("adminEditContactInput");
+const adminSendInviteButton = document.getElementById("adminSendInviteButton");
+const adminInviteHint = document.getElementById("adminInviteHint");
+const adminInviteCodeInput = document.getElementById("adminInviteCodeInput");
+const adminEditCancelButton = document.getElementById("adminEditCancelButton");
+const adminEditConfirmButton = document.getElementById("adminEditConfirmButton");
 const chatMessages = document.getElementById("chatMessages");
 const chatInput = document.getElementById("chatInput");
 const chatSubmit = document.getElementById("chatSubmit");
@@ -530,6 +721,15 @@ const crmSection = document.getElementById("crmSection");
 const generateNowButton = document.getElementById("generateNowButton");
 let activePageTab = "team";
 let dashboardGenerated = false;
+let crmBoardSortDescending = true;
+let crmBoardSearchTerm = "";
+let adminModalOpen = false;
+let adminEditModalOpen = false;
+let adminEditingAccountId = "";
+let adminEditContactType = "phone";
+let adminEditDraftContactValue = "";
+let adminEditGeneratedCode = "";
+let adminEditInviteSent = false;
 
 const streamRevealQueue = [];
 let streamRevealCounter = 0;
@@ -1033,6 +1233,7 @@ function setTimeScope(scope) {
   activeTimeScope = scope;
   if (scope !== "custom") {
     customRangeOpen = false;
+    customRangeTarget = "report";
     const referenceDate = selectedRangeEnd || today;
     const range = getScopeRangeForDate(referenceDate, scope);
     selectedRangeStart = range.start;
@@ -1055,6 +1256,7 @@ function applySelectedRange(start, end, scope = "custom") {
   }
   activeTimeScope = scope;
   customRangeOpen = false;
+  customRangeTarget = "report";
   syncTimeScopeState(scope);
   syncRangeInputs();
   syncCustomRangeVisibility();
@@ -1063,11 +1265,13 @@ function applySelectedRange(start, end, scope = "custom") {
 }
 
 function syncRangeInputs() {
+  const startDate = customRangeTarget === "activity" ? salesActivityRangeStart || today : selectedRangeStart;
+  const endDate = customRangeTarget === "activity" ? salesActivityRangeEnd || today : selectedRangeEnd;
   if (rangeStartPicker) {
-    rangeStartPicker.value = formatDateInputValue(selectedRangeStart);
+    rangeStartPicker.value = formatDateInputValue(startDate);
   }
   if (rangeEndPicker) {
-    rangeEndPicker.value = formatDateInputValue(selectedRangeEnd);
+    rangeEndPicker.value = formatDateInputValue(endDate);
   }
 }
 
@@ -1075,14 +1279,15 @@ function syncCustomRangeVisibility() {
   if (!customRangeModal) {
     return;
   }
-  customRangeModal.hidden = !(activeTimeScope === "custom" && customRangeOpen);
+  customRangeModal.hidden = !customRangeOpen;
 }
 
-function openCustomRangePicker() {
+function openCustomRangePicker(target = "report") {
   if (!customRangeModal) {
     return;
   }
 
+  customRangeTarget = target;
   customRangeOpen = true;
   syncRangeInputs();
   syncCustomRangeVisibility();
@@ -1093,7 +1298,260 @@ function openCustomRangePicker() {
 
 function closeCustomRangePicker() {
   customRangeOpen = false;
+  customRangeTarget = "report";
   syncCustomRangeVisibility();
+}
+
+function syncAdminModalVisibility() {
+  if (!adminModal) {
+    return;
+  }
+  adminModal.hidden = !adminModalOpen;
+}
+
+function syncAdminEditModalVisibility() {
+  if (!adminEditModal) {
+    return;
+  }
+  adminEditModal.hidden = !adminEditModalOpen;
+}
+
+function getAdminAccountById(accountId) {
+  return adminAccounts.find((account) => account.id === accountId) || null;
+}
+
+function getAdminContactLabel(type) {
+  return type === "email" ? "邮箱" : "手机号";
+}
+
+function formatAdminContact(account) {
+  return `${getAdminContactLabel(account.contactType)} ${account.contactValue}`;
+}
+
+function isValidAdminContact(type, value) {
+  const trimmed = value.trim();
+  if (type === "email") {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+  }
+
+  return /^1\d{10}$/.test(trimmed);
+}
+
+function generateInviteCode() {
+  return `${Math.floor(100000 + Math.random() * 900000)}`;
+}
+
+function updateAdminEditTypeButtons() {
+  if (!adminEditTypeGroup) {
+    return;
+  }
+
+  const buttons = adminEditTypeGroup.querySelectorAll("[data-contact-type]");
+  buttons.forEach((button) => {
+    const isActive = (button.dataset.contactType || "phone") === adminEditContactType;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+}
+
+function renderAdminEditModal() {
+  const account = getAdminAccountById(adminEditingAccountId);
+  if (!account || !adminEditSummary || !adminEditContactInput || !adminInviteCodeInput) {
+    return;
+  }
+
+  adminEditSummary.textContent = `${account.name} · ${account.username} · ${formatAdminContact(account)}`;
+  adminEditContactInput.placeholder = adminEditContactType === "email" ? "输入邮箱" : "输入手机号";
+  adminEditContactInput.value = adminEditDraftContactValue;
+  if (!adminEditInviteSent) {
+    adminInviteCodeInput.value = "";
+    if (adminInviteHint) {
+      adminInviteHint.textContent = "先填写新的手机号或邮箱，再发送邀请码";
+    }
+  } else if (adminInviteHint) {
+    adminInviteHint.textContent = `邀请码已发送：${adminEditGeneratedCode}`;
+  }
+
+  updateAdminEditTypeButtons();
+
+  if (adminSendInviteButton) {
+    adminSendInviteButton.textContent = adminEditInviteSent ? "重新发送" : "发送邀请码";
+  }
+
+  if (adminEditConfirmButton) {
+    const isCodeMatch = adminEditInviteSent && adminInviteCodeInput.value.trim() === adminEditGeneratedCode;
+    const isContactValid = isValidAdminContact(adminEditContactType, adminEditContactInput.value);
+    adminEditConfirmButton.disabled = !(isCodeMatch && isContactValid);
+  }
+}
+
+function openAdminEditModal(accountId) {
+  const account = getAdminAccountById(accountId);
+  if (!account || !adminEditModal) {
+    return;
+  }
+
+  adminEditingAccountId = account.id;
+  adminEditContactType = account.contactType || "phone";
+  adminEditDraftContactValue = account.contactValue;
+  adminEditGeneratedCode = "";
+  adminEditInviteSent = false;
+  adminEditModalOpen = true;
+  syncAdminEditModalVisibility();
+  renderAdminEditModal();
+  window.setTimeout(() => {
+    adminEditClose?.focus();
+    adminEditContactInput?.focus();
+    adminEditContactInput?.select?.();
+  }, 0);
+}
+
+function closeAdminEditModal() {
+  adminEditModalOpen = false;
+  adminEditingAccountId = "";
+  adminEditDraftContactValue = "";
+  adminEditGeneratedCode = "";
+  adminEditInviteSent = false;
+  syncAdminEditModalVisibility();
+}
+
+function sendAdminInviteCode() {
+  const account = getAdminAccountById(adminEditingAccountId);
+  if (!account || !adminEditContactInput || !adminInviteHint) {
+    return;
+  }
+
+  const value = adminEditContactInput.value.trim();
+  if (!isValidAdminContact(adminEditContactType, value)) {
+    adminInviteHint.textContent =
+      adminEditContactType === "email" ? "请输入正确的邮箱地址" : "请输入 11 位手机号";
+    return;
+  }
+
+  adminEditGeneratedCode = generateInviteCode();
+  adminEditInviteSent = true;
+  adminEditDraftContactValue = value;
+  adminInviteCodeInput.value = "";
+  adminInviteHint.textContent = `邀请码已发送：${adminEditGeneratedCode}`;
+  renderAdminEditModal();
+  adminInviteCodeInput?.focus();
+}
+
+function confirmAdminEdit() {
+  const account = getAdminAccountById(adminEditingAccountId);
+  if (!account || !adminEditContactInput || !adminInviteCodeInput || !adminInviteHint) {
+    return;
+  }
+
+  const value = adminEditContactInput.value.trim();
+  const inviteCode = adminInviteCodeInput.value.trim();
+
+  if (!isValidAdminContact(adminEditContactType, value)) {
+    adminInviteHint.textContent =
+      adminEditContactType === "email" ? "请输入正确的邮箱地址" : "请输入 11 位手机号";
+    return;
+  }
+
+  if (!adminEditInviteSent) {
+    adminInviteHint.textContent = "请先发送邀请码";
+    return;
+  }
+
+  if (inviteCode !== adminEditGeneratedCode) {
+    adminInviteHint.textContent = "邀请码不正确";
+    return;
+  }
+
+  account.contactType = adminEditContactType;
+  account.contactValue = value;
+  account.lastActive = "刚刚";
+  renderAdminTable();
+  closeAdminEditModal();
+}
+
+function deleteAdminAccount(accountId) {
+  const account = getAdminAccountById(accountId);
+  if (!account) {
+    return;
+  }
+
+  const confirmed = window.confirm(`确认删除账号 ${account.name} 吗？`);
+  if (!confirmed) {
+    return;
+  }
+
+  adminAccounts = adminAccounts.filter((item) => item.id !== accountId);
+  if (adminEditingAccountId === accountId) {
+    closeAdminEditModal();
+  }
+  renderAdminTable();
+}
+
+function openAdminModal() {
+  if (!adminModal) {
+    return;
+  }
+  adminModalOpen = true;
+  syncAdminModalVisibility();
+  renderAdminTable();
+  window.setTimeout(() => {
+    adminModalClose?.focus();
+  }, 0);
+}
+
+function closeAdminModal() {
+  adminModalOpen = false;
+  syncAdminModalVisibility();
+  closeAdminEditModal();
+}
+
+function renderAdminTable() {
+  if (!adminTableBody) {
+    return;
+  }
+
+  const totalPoints = adminAccounts.reduce((sum, account) => sum + account.points, 0);
+  if (adminAccountSummary) {
+    adminAccountSummary.textContent = `${adminAccounts.length} 个账号 · 总积分 ${totalPoints.toLocaleString("zh-CN")}`;
+  }
+
+  adminTableBody.replaceChildren();
+
+  adminAccounts.forEach((account) => {
+    const row = document.createElement("tr");
+
+    const accountCell = createElement("td");
+    const accountButton = createElement("button", "admin-account-link", account.name);
+    accountButton.type = "button";
+    accountButton.dataset.accountId = account.id;
+    accountButton.dataset.adminAction = "edit";
+    accountCell.append(
+      accountButton,
+      createElement("div", "admin-account-meta", "点击修改手机号 / 邮箱")
+    );
+
+    const contactCell = createElement("td");
+    contactCell.appendChild(createElement("div", "admin-account-contact", formatAdminContact(account)));
+
+    const usernameCell = createElement("td");
+    usernameCell.appendChild(createElement("div", "admin-account-username", account.username));
+
+    const pointsCell = createElement("td");
+    pointsCell.appendChild(createElement("div", "admin-points", account.points.toLocaleString("zh-CN")));
+
+    const lastActiveCell = createElement("td");
+    lastActiveCell.appendChild(createElement("div", "admin-account-meta", account.lastActive));
+
+    const actionCell = createElement("td");
+    const deleteButton = createElement("button", "admin-row-action is-danger", "删除");
+    deleteButton.type = "button";
+    deleteButton.dataset.adminAction = "delete";
+    deleteButton.dataset.accountId = account.id;
+    actionCell.appendChild(deleteButton);
+
+    row.append(accountCell, contactCell, usernameCell, pointsCell, lastActiveCell, actionCell);
+    adminTableBody.appendChild(row);
+  });
 }
 
 function renderPageDocument() {
@@ -1171,6 +1629,46 @@ function renderPageDocument() {
     }
   }
 
+  syncCrmBoardToolbar();
+  renderCrmFullTable();
+  renderSalesActivities();
+}
+
+function setupCrmBoardControls() {
+  if (crmBoardSortButton) {
+    crmBoardSortButton.addEventListener("click", () => {
+      crmBoardSortDescending = !crmBoardSortDescending;
+      syncCrmBoardToolbar();
+      renderCrmFullTable();
+    });
+  }
+
+  if (crmBoardSearchInput) {
+    crmBoardSearchInput.addEventListener("input", () => {
+      crmBoardSearchTerm = crmBoardSearchInput.value || "";
+      renderCrmFullTable();
+    });
+  }
+
+  if (crmBoardFilterButton) {
+    crmBoardFilterButton.addEventListener("click", () => {
+      crmBoardSearchInput?.focus();
+    });
+  }
+
+  if (crmBoardMoreButton) {
+    crmBoardMoreButton.addEventListener("click", () => {
+      crmBoardSearchInput?.focus();
+    });
+  }
+
+  if (crmBoardDateButton) {
+    crmBoardDateButton.addEventListener("click", () => {
+      openCustomRangePicker("board");
+    });
+  }
+
+  syncCrmBoardToolbar();
 }
 
 function clearDashboardContent() {
@@ -1574,6 +2072,280 @@ function addMessage(role, content) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+function createSvgIcon(viewBox, paths, className = "") {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", viewBox);
+  svg.setAttribute("fill", "none");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  if (className) {
+    svg.classList.add(...className.split(/\s+/).filter(Boolean));
+  }
+
+  paths.forEach((pathDef) => {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    if (pathDef.d) {
+      path.setAttribute("d", pathDef.d);
+    }
+    if (pathDef.fill) {
+      path.setAttribute("fill", pathDef.fill);
+    }
+    if (pathDef.stroke) {
+      path.setAttribute("stroke", pathDef.stroke);
+    }
+    if (pathDef.strokeWidth) {
+      path.setAttribute("stroke-width", pathDef.strokeWidth);
+    }
+    if (pathDef.strokeLinecap) {
+      path.setAttribute("stroke-linecap", pathDef.strokeLinecap);
+    }
+    if (pathDef.strokeLinejoin) {
+      path.setAttribute("stroke-linejoin", pathDef.strokeLinejoin);
+    }
+    svg.appendChild(path);
+  });
+
+  return svg;
+}
+
+function createCrmBoardIcon(entityType) {
+  if (entityType === "person") {
+    return createSvgIcon("0 0 24 24", [
+      {
+        d: "M12 5.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z",
+        fill: "currentColor",
+      },
+      {
+        d: "M5.5 18.5c.62-3.02 3.16-5 6.5-5s5.88 1.98 6.5 5",
+        stroke: "currentColor",
+        strokeWidth: "1.7",
+        strokeLinecap: "round",
+      },
+    ], "crm-board-icon is-person");
+  }
+
+  return createSvgIcon("0 0 24 24", [
+    {
+      d: "M4.5 20.5V7.5L12 3l7.5 4.5v13H4.5Z",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "1.6",
+      strokeLinejoin: "round",
+    },
+    {
+      d: "M8 10.25h2.6M8 13.5h2.6M13.4 10.25H16M13.4 13.5H16",
+      stroke: "currentColor",
+      strokeWidth: "1.6",
+      strokeLinecap: "round",
+    },
+  ], "crm-board-icon is-company");
+}
+
+function createCrmBoardTag(text, className = "") {
+  return createElement("span", `crm-board-tag ${className}`.trim(), text);
+}
+
+function createCrmBoardChip(text, className = "") {
+  return createElement("span", `crm-board-chip ${className}`.trim(), text);
+}
+
+function createCrmBoardHeaderCell(label, isActive = false) {
+  const cell = createElement("div", `crm-board-head-cell${isActive ? " is-active" : ""}`);
+  cell.appendChild(createElement("span", "crm-board-head-label", label));
+  return cell;
+}
+
+function createCrmBoardOpportunityBlock(opportunity, index) {
+  const block = createElement("div", "crm-board-opportunity");
+  const head = createElement("div", "crm-board-opportunity-head");
+  const title = createElement("div", "crm-board-opportunity-title");
+  title.appendChild(createSvgIcon("0 0 24 24", [
+    {
+      d: "M6.5 7.5h11v9H6.5z",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "1.7",
+      strokeLinejoin: "round",
+    },
+    {
+      d: "M8.5 7.5V6.2C8.5 5.2 9.2 4.5 10.2 4.5h3.6c1 0 1.7.7 1.7 1.7v1.3",
+      stroke: "currentColor",
+      strokeWidth: "1.7",
+      strokeLinecap: "round",
+    },
+  ], "crm-board-mini-icon"));
+  title.appendChild(createElement("span", "", opportunity.title));
+  head.appendChild(title);
+  if (opportunity.moreLabel) {
+    head.appendChild(createElement("span", "crm-board-opportunity-more", opportunity.moreLabel));
+  }
+  block.appendChild(head);
+
+  if (opportunity.tags?.length) {
+    const tags = createElement("div", "crm-board-opportunity-tags");
+    opportunity.tags.forEach((tag, tagIndex) => {
+      const tone = tagIndex === 0 ? "tone-warm" : tagIndex === 1 ? "tone-neutral" : "tone-cool";
+      tags.appendChild(createCrmBoardChip(tag, tone));
+    });
+    block.appendChild(tags);
+  }
+
+  return block;
+}
+
+function createCrmBoardWinBlock(winBlock) {
+  const block = createElement("div", "crm-board-win");
+  const head = createElement("div", "crm-board-win-head");
+  head.appendChild(createElement("span", "crm-board-win-trend", "↗"));
+  head.appendChild(createElement("strong", "crm-board-win-label", `赢率 ${winBlock.rate}%`));
+  block.appendChild(head);
+
+  const progress = createElement("div", "crm-board-progress");
+  const fill = createElement("div", "crm-board-progress-fill");
+  fill.style.width = `${Math.max(0, Math.min(winBlock.rate, 100))}%`;
+  progress.appendChild(fill);
+  block.appendChild(progress);
+
+  if (winBlock.summary) {
+    block.appendChild(createElement("div", "crm-board-risk-note", winBlock.summary));
+  }
+
+  return block;
+}
+
+function createCrmBoardRecentBlock(recentFollowup) {
+  const block = createElement("div", "crm-board-followup-card");
+  const head = createElement("div", "crm-board-followup-head");
+  const time = createElement("div", "crm-board-followup-time", recentFollowup.time);
+  head.appendChild(time);
+  head.appendChild(createElement("span", "crm-board-followup-more", "更多跟进 >"));
+  block.appendChild(head);
+  block.appendChild(createElement("div", "crm-board-followup-body", recentFollowup.note));
+  return block;
+}
+
+function createCrmBoardNextItem(nextFollowup) {
+  const item = createElement(
+    "div",
+    `crm-board-next-item${nextFollowup.done ? " is-done" : ""}${nextFollowup.overdue ? " is-overdue" : ""}`
+  );
+  item.appendChild(createElement("span", "crm-board-next-dot"));
+
+  const copy = createElement("div", "crm-board-next-copy");
+  copy.appendChild(createElement("div", "crm-board-next-time", nextFollowup.time));
+  copy.appendChild(createElement("div", "crm-board-next-body", nextFollowup.note));
+  item.appendChild(copy);
+  return item;
+}
+
+function buildCrmBoardCustomerCell(record) {
+  const cell = createElement("div", "crm-board-cell crm-board-cell-customer");
+  const entity = createElement("div", "crm-board-entity");
+  entity.appendChild(createCrmBoardIcon(record.entityType));
+
+  const copy = createElement("div", "crm-board-entity-copy");
+  const top = createElement("div", "crm-board-name-row");
+  top.appendChild(createElement("strong", "crm-board-name", record.customer));
+  if (record.status) {
+    top.appendChild(createElement("span", "crm-board-status", `（${record.status}）`));
+  }
+  copy.appendChild(top);
+
+  const tags = createElement("div", "crm-board-tags");
+  record.tags.forEach((tag, tagIndex) => {
+    const tone = tagIndex === 0 ? "tone-warm" : tagIndex === 1 ? "tone-cool" : "tone-neutral";
+    tags.appendChild(createCrmBoardTag(tag, tone));
+  });
+  copy.appendChild(tags);
+
+  entity.appendChild(copy);
+  cell.appendChild(entity);
+  return cell;
+}
+
+function buildCrmBoardOpportunityCell(record) {
+  const cell = createElement("div", "crm-board-cell crm-board-cell-opportunity");
+  const opportunity = record.opportunities[0];
+  if (!opportunity) {
+    return cell;
+  }
+
+  cell.appendChild(createCrmBoardOpportunityBlock(opportunity, 0));
+  return cell;
+}
+
+function buildCrmBoardWinCell(record) {
+  const cell = createElement("div", "crm-board-cell crm-board-cell-win");
+  const winBlock = record.winBlocks[0];
+  if (!winBlock) {
+    return cell;
+  }
+
+  cell.appendChild(createCrmBoardWinBlock(winBlock));
+  return cell;
+}
+
+function buildCrmBoardRecentCell(record) {
+  const cell = createElement("div", "crm-board-cell crm-board-cell-recent");
+  if (!record.recentFollowup) {
+    return cell;
+  }
+
+  cell.appendChild(createCrmBoardRecentBlock(record.recentFollowup));
+  return cell;
+}
+
+function buildCrmBoardNextCell(record) {
+  const cell = createElement("div", "crm-board-cell crm-board-cell-next");
+  if (record.nextFollowups.length === 0) {
+    return cell;
+  }
+
+  const list = createElement("div", "crm-board-next-list");
+  record.nextFollowups.forEach((nextFollowup) => {
+    list.appendChild(createCrmBoardNextItem(nextFollowup));
+  });
+  cell.appendChild(list);
+  return cell;
+}
+
+function getFilteredCrmBoardRows() {
+  const term = crmBoardSearchTerm.trim().toLowerCase();
+  const rows = crmBoardRows.filter((row) => {
+    const matchesTerm = !term || row.searchText.includes(term);
+    const matchesRange = !crmBoardRangeStart || !crmBoardRangeEnd
+      ? true
+      : new Date(`${row.updatedAt.slice(0, 10)}T12:00:00`) >= crmBoardRangeStart &&
+        new Date(`${row.updatedAt.slice(0, 10)}T12:00:00`) <= crmBoardRangeEnd;
+    return matchesTerm && matchesRange;
+  });
+  rows.sort((a, b) => {
+    const left = new Date(a.updatedAt).getTime();
+    const right = new Date(b.updatedAt).getTime();
+    return crmBoardSortDescending ? right - left : left - right;
+  });
+  return rows;
+}
+
+function syncCrmBoardToolbar() {
+  if (crmBoardSortButton) {
+    crmBoardSortButton.classList.toggle("is-desc", crmBoardSortDescending);
+    crmBoardSortButton.classList.toggle("is-asc", !crmBoardSortDescending);
+    crmBoardSortButton.setAttribute(
+      "aria-label",
+      crmBoardSortDescending ? "切换为最早更新时间排序" : "切换为最新更新时间排序"
+    );
+  }
+
+  if (crmBoardSearchInput && crmBoardSearchInput.value !== crmBoardSearchTerm) {
+    crmBoardSearchInput.value = crmBoardSearchTerm;
+  }
+
+  if (crmBoardDateButton) {
+    crmBoardDateButton.textContent = formatCrmBoardDateButtonLabel();
+  }
+}
+
 function renderCrmHeaders() {
   const [overallTable, customerTable, opportunityTable] =
     dashboardDocument.sections.crm.tables;
@@ -1612,43 +2384,24 @@ function renderCrmFullTable() {
 
   crmFullHead.replaceChildren();
   [
-    "客户",
-    "商机",
-    "负责人",
-    "客户分层",
-    "阶段",
-    "跟进状态",
-    "预计成交",
+    "客户信息",
+    "活跃商机",
+    "赢率与风险",
     "最近跟进",
-    "风险",
-    "备注",
+    "下次跟进",
   ].forEach((column) => {
-    crmFullHead.appendChild(createElement("th", "", column));
+    crmFullHead.appendChild(createCrmBoardHeaderCell(column));
   });
 
   crmFullTableBody.replaceChildren();
-  crmRecords.forEach((record, index) => {
-    const row = document.createElement("tr");
-    [
-      record.customer,
-      record.opportunity,
-      record.owner,
-      record.tier,
-      record.stage,
-      record.followupStatus,
-      formatCompactCurrency(record.estRevenue),
-      record.lastFollowup,
-      record.risk,
-      `${record.customerRisk} / ${record.opportunityRisk}`,
-    ].forEach((value, cellIndex) => {
-      const cell = createElement("td", "", value);
-      if (cellIndex === 8) {
-        cell.className = `risk-level ${record.risk === "高" ? "high" : record.risk === "中" ? "medium" : "low"}`;
-      }
-      row.appendChild(cell);
-    });
+  getFilteredCrmBoardRows().forEach((record) => {
+    const row = createElement("div", "crm-board-row");
+    row.appendChild(buildCrmBoardCustomerCell(record));
+    row.appendChild(buildCrmBoardOpportunityCell(record));
+    row.appendChild(buildCrmBoardWinCell(record));
+    row.appendChild(buildCrmBoardRecentCell(record));
+    row.appendChild(buildCrmBoardNextCell(record));
     crmFullTableBody.appendChild(row);
-    queueStreamReveal(row, 160 + index * 110);
   });
 }
 
@@ -1657,21 +2410,120 @@ function renderSalesActivities() {
     return;
   }
 
+  syncSalesActivityToolbar();
   salesActivityHead.replaceChildren();
   ["时间", "人员", "客户/商机", "操作日志"].forEach((column) => {
     salesActivityHead.appendChild(createElement("th", "", column));
   });
 
   salesActivityFeed.replaceChildren();
-  salesActivities.forEach((activity, index) => {
+  const rows = getFilteredSalesActivities();
+  if (rows.length === 0) {
+    const row = document.createElement("tr");
+    row.className = "activity-empty-row";
+    const emptyCell = createElement("td", "activity-empty", "暂无匹配记录");
+    emptyCell.setAttribute("colspan", "4");
+    row.appendChild(emptyCell);
+    salesActivityFeed.appendChild(row);
+    return;
+  }
+
+  rows.forEach((activity) => {
     const row = document.createElement("tr");
     row.appendChild(createElement("td", "activity-time", activity.time));
     row.appendChild(createElement("td", "activity-person", activity.person || ""));
     row.appendChild(createElement("td", "activity-subject", activity.target || ""));
     row.appendChild(createElement("td", "activity-log", activity.action || ""));
     salesActivityFeed.appendChild(row);
-    queueStreamReveal(row, 140 + index * 120);
   });
+}
+
+function parseActivityTimestamp(activity) {
+  if (!activity?.date || !activity?.time) {
+    return 0;
+  }
+
+  const timestamp = new Date(`${activity.date}T${activity.time}:00`).getTime();
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+function isActivityInRange(activity, start, end) {
+  if (!start || !end) {
+    return true;
+  }
+
+  const activityDate = new Date(`${activity.date}T12:00:00`);
+  return activityDate >= start && activityDate <= end;
+}
+
+function formatActivityDateButtonLabel() {
+  if (!salesActivityRangeStart || !salesActivityRangeEnd) {
+    return "日期筛选";
+  }
+
+  const sameDay =
+    formatDateInputValue(salesActivityRangeStart) === formatDateInputValue(salesActivityRangeEnd);
+  return sameDay
+    ? formatShortDateLabel(salesActivityRangeStart)
+    : formatRangeLabel(salesActivityRangeStart, salesActivityRangeEnd);
+}
+
+function getFilteredSalesActivities() {
+  const term = salesActivitySearchTerm.trim().toLowerCase();
+  const rows = salesActivities.filter((activity) => {
+    const searchable = [
+      activity.date,
+      activity.time,
+      activity.person,
+      activity.target,
+      activity.action,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    const matchesTerm = !term || searchable.includes(term);
+    const matchesRange = isActivityInRange(activity, salesActivityRangeStart, salesActivityRangeEnd);
+    return matchesTerm && matchesRange;
+  });
+
+  rows.sort((left, right) => {
+    const leftTime = parseActivityTimestamp(left);
+    const rightTime = parseActivityTimestamp(right);
+    return salesActivitySortDescending ? rightTime - leftTime : leftTime - rightTime;
+  });
+
+  return rows;
+}
+
+function syncSalesActivityToolbar() {
+  if (salesActivitySortButton) {
+    salesActivitySortButton.classList.toggle("is-desc", salesActivitySortDescending);
+    salesActivitySortButton.classList.toggle("is-asc", !salesActivitySortDescending);
+    salesActivitySortButton.setAttribute(
+      "aria-label",
+      salesActivitySortDescending ? "切换为最早时间排序" : "切换为最新时间排序"
+    );
+  }
+
+  if (salesActivitySearchInput && salesActivitySearchInput.value !== salesActivitySearchTerm) {
+    salesActivitySearchInput.value = salesActivitySearchTerm;
+  }
+
+  if (salesActivityDateButton) {
+    salesActivityDateButton.textContent = formatActivityDateButtonLabel();
+  }
+}
+
+function formatCrmBoardDateButtonLabel() {
+  if (!crmBoardRangeStart || !crmBoardRangeEnd) {
+    return "日期筛选";
+  }
+
+  const sameDay =
+    formatDateInputValue(crmBoardRangeStart) === formatDateInputValue(crmBoardRangeEnd);
+  return sameDay
+    ? formatShortDateLabel(crmBoardRangeStart)
+    : formatRangeLabel(crmBoardRangeStart, crmBoardRangeEnd);
 }
 
 function syncPageTabState(tabName) {
@@ -1692,12 +2544,119 @@ function setupPageTabs() {
   pageTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const tabName = button.dataset.pageTab || "team";
+      closeAdminModal();
       setPageView(tabName);
       window.scrollTo({ top: 0, behavior: "auto" });
     });
   });
 
   setPageView(activePageTab);
+}
+
+function setupAdminPanel() {
+  if (adminPanelButton) {
+    adminPanelButton.addEventListener("click", openAdminModal);
+  }
+
+  if (adminModalBackdrop) {
+    adminModalBackdrop.addEventListener("click", closeAdminModal);
+  }
+
+  if (adminModalClose) {
+    adminModalClose.addEventListener("click", closeAdminModal);
+  }
+
+  if (adminRefreshButton) {
+    adminRefreshButton.addEventListener("click", renderAdminTable);
+  }
+
+  if (adminEditBackdrop) {
+    adminEditBackdrop.addEventListener("click", closeAdminEditModal);
+  }
+
+  if (adminEditClose) {
+    adminEditClose.addEventListener("click", closeAdminEditModal);
+  }
+
+  if (adminEditCancelButton) {
+    adminEditCancelButton.addEventListener("click", closeAdminEditModal);
+  }
+
+  if (adminEditTypeGroup) {
+    adminEditTypeGroup.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-contact-type]");
+      if (!button) {
+        return;
+      }
+
+      const nextType = button.dataset.contactType || "phone";
+      if (nextType === adminEditContactType) {
+        return;
+      }
+
+      adminEditContactType = nextType;
+      adminEditInviteSent = false;
+      adminEditGeneratedCode = "";
+      adminEditDraftContactValue = "";
+      if (adminInviteCodeInput) {
+        adminInviteCodeInput.value = "";
+      }
+      if (adminEditContactInput) {
+        adminEditContactInput.value = "";
+      }
+      renderAdminEditModal();
+      adminEditContactInput?.focus();
+    });
+  }
+
+  if (adminEditContactInput) {
+    adminEditContactInput.addEventListener("input", () => {
+      adminEditDraftContactValue = adminEditContactInput.value;
+      if (adminEditInviteSent) {
+        adminEditInviteSent = false;
+        adminEditGeneratedCode = "";
+        if (adminInviteCodeInput) {
+          adminInviteCodeInput.value = "";
+        }
+        if (adminInviteHint) {
+          adminInviteHint.textContent = "重新填写后再次发送邀请码";
+        }
+      }
+      renderAdminEditModal();
+    });
+  }
+
+  if (adminSendInviteButton) {
+    adminSendInviteButton.addEventListener("click", sendAdminInviteCode);
+  }
+
+  if (adminInviteCodeInput) {
+    adminInviteCodeInput.addEventListener("input", renderAdminEditModal);
+  }
+
+  if (adminEditConfirmButton) {
+    adminEditConfirmButton.addEventListener("click", confirmAdminEdit);
+  }
+
+  if (adminTableBody) {
+    adminTableBody.addEventListener("click", (event) => {
+      const editButton = event.target.closest('[data-admin-action="edit"]');
+      if (editButton) {
+        openAdminEditModal(editButton.dataset.accountId || "");
+        return;
+      }
+
+      const deleteButton = event.target.closest('[data-admin-action="delete"]');
+      if (!deleteButton) {
+        return;
+      }
+
+      deleteAdminAccount(deleteButton.dataset.accountId || "");
+    });
+  }
+
+  syncAdminModalVisibility();
+  syncAdminEditModalVisibility();
 }
 
 function initializeDate() {
@@ -1712,7 +2671,7 @@ function initializeDate() {
       const scope = button.dataset.timeScope || "day";
       if (scope === "custom") {
         setTimeScope(scope);
-        openCustomRangePicker();
+        openCustomRangePicker("report");
         return;
       }
       setTimeScope(scope);
@@ -1736,11 +2695,38 @@ function initializeDate() {
       if (!rangeStartPicker?.value || !rangeEndPicker?.value) {
         return;
       }
-      applySelectedRange(
-        new Date(`${rangeStartPicker.value}T12:00:00`),
-        new Date(`${rangeEndPicker.value}T12:00:00`),
-        "custom"
-      );
+      const start = new Date(`${rangeStartPicker.value}T12:00:00`);
+      const end = new Date(`${rangeEndPicker.value}T12:00:00`);
+      if (customRangeTarget === "board") {
+        crmBoardRangeStart = start;
+        crmBoardRangeEnd = end;
+        if (crmBoardRangeEnd < crmBoardRangeStart) {
+          const swap = crmBoardRangeStart;
+          crmBoardRangeStart = crmBoardRangeEnd;
+          crmBoardRangeEnd = swap;
+        }
+        customRangeOpen = false;
+        customRangeTarget = "report";
+        syncCustomRangeVisibility();
+        syncCrmBoardToolbar();
+        renderCrmFullTable();
+        return;
+      }
+      if (customRangeTarget === "activity") {
+        salesActivityRangeStart = start;
+        salesActivityRangeEnd = end;
+        if (salesActivityRangeEnd < salesActivityRangeStart) {
+          const swap = salesActivityRangeStart;
+          salesActivityRangeStart = salesActivityRangeEnd;
+          salesActivityRangeEnd = swap;
+        }
+        customRangeOpen = false;
+        customRangeTarget = "report";
+        syncCustomRangeVisibility();
+        renderSalesActivities();
+        return;
+      }
+      applySelectedRange(start, end, "custom");
     });
   }
 
@@ -1753,8 +2739,14 @@ function initializeDate() {
   }
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && customRangeOpen) {
-      closeCustomRangePicker();
+    if (event.key === "Escape") {
+      if (adminEditModalOpen) {
+        closeAdminEditModal();
+      } else if (adminModalOpen) {
+        closeAdminModal();
+      } else if (customRangeOpen) {
+        closeCustomRangePicker();
+      }
     }
   });
 
@@ -1785,6 +2777,43 @@ function initializeDate() {
           "custom"
         );
       }
+    });
+  }
+
+  if (salesActivitySortButton) {
+    salesActivitySortButton.addEventListener("click", () => {
+      salesActivitySortDescending = !salesActivitySortDescending;
+      syncSalesActivityToolbar();
+      renderSalesActivities();
+    });
+  }
+
+  if (salesActivitySearchInput) {
+    salesActivitySearchInput.addEventListener("input", () => {
+      salesActivitySearchTerm = salesActivitySearchInput.value || "";
+      renderSalesActivities();
+    });
+  }
+
+  if (salesActivityDateButton) {
+    salesActivityDateButton.addEventListener("click", () => {
+      openCustomRangePicker("activity");
+    });
+  }
+
+  if (salesActivityFilterButton) {
+    salesActivityFilterButton.addEventListener("click", () => {
+      salesActivitySearchTerm = "";
+      salesActivityRangeStart = null;
+      salesActivityRangeEnd = null;
+      syncSalesActivityToolbar();
+      renderSalesActivities();
+    });
+  }
+
+  if (salesActivityMoreButton) {
+    salesActivityMoreButton.addEventListener("click", () => {
+      salesActivitySearchInput?.focus();
     });
   }
 
@@ -1957,7 +2986,9 @@ function renderOverviewRichtext() {
 function initialize() {
   renderPageDocument();
   initializeDate();
+  setupCrmBoardControls();
   setupPageTabs();
+  setupAdminPanel();
   setupChat();
   playTypewriter();
 

@@ -4,12 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body data-page-view="team" data-dashboard-state="empty">
@@ -20,16 +14,19 @@
             <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-page-tab="team">团队看板</button>
             <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="table">商机表</button>
             <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="activity">销售动态</button>
+            <button class="section-tab section-tab-admin" type="button" id="adminPanelButton" aria-label="打开后台管理">后台</button>
           </div>
         </nav>
 
         <header class="hero" id="statusOverviewSection">
           <div class="hero-top-meta">
             <div class="time-range-toolbar" id="timeRangeToolbar">
-              <div class="time-scope-nav" id="timeScopeNav">
-                <button type="button" class="time-scope-step" id="timeScopePrev" aria-label="切换到上一个周期">‹</button>
+              <div class="time-range-meta">
                 <div class="hero-period-note" id="periodNote"></div>
-                <button type="button" class="time-scope-step" id="timeScopeNext" aria-label="切换到下一个周期">›</button>
+                <div class="time-scope-nav" id="timeScopeNav">
+                  <button type="button" class="time-scope-step" id="timeScopePrev" aria-label="切换到上一个周期">‹</button>
+                  <button type="button" class="time-scope-step" id="timeScopeNext" aria-label="切换到下一个周期">›</button>
+                </div>
               </div>
               <div class="time-scope-switcher" id="timeScopeSwitcher" role="tablist" aria-label="时间范围">
                 <button type="button" class="time-scope-button is-active" role="tab" aria-selected="true" data-time-scope="day">日统计</button>
@@ -126,19 +123,85 @@
           </section>
         </div>
 
-        <section class="page-panel" id="tablePage" aria-label="全量客户与商机表">
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr id="crmFullHead"></tr>
-              </thead>
-              <tbody id="crmFullTableBody"></tbody>
-            </table>
+        <section class="page-panel page-panel-board" id="tablePage" aria-label="全量客户与商机表">
+          <div class="crm-board-page">
+            <div class="crm-board-toolbar">
+              <button type="button" class="crm-board-sort" id="crmBoardSortButton" aria-label="切换更新时间排序">
+                <span class="crm-board-sort-label">按更新时间排序</span>
+                <span class="crm-board-sort-caret" aria-hidden="true">▾</span>
+              </button>
+
+              <div class="crm-board-toolbar-actions">
+                <button type="button" class="crm-board-date" id="crmBoardDateButton" aria-label="选择日期范围">
+                  日期筛选
+                </button>
+                <label class="crm-board-search" for="crmBoardSearchInput">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <circle cx="11" cy="11" r="6.2" fill="none" stroke="currentColor" stroke-width="1.7" />
+                    <path d="M15.6 15.6L20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                  </svg>
+                  <input id="crmBoardSearchInput" type="search" placeholder="输入" aria-label="搜索客户或商机" />
+                </label>
+                <button type="button" class="crm-board-filter" id="crmBoardFilterButton" aria-label="筛选">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      d="M4.5 6h15l-5.8 6.7v4.5l-3.4 1.8v-6.3L4.5 6Z"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span>筛选</span>
+                </button>
+                <button type="button" class="crm-board-more" id="crmBoardMoreButton" aria-label="更多操作">⋯</button>
+              </div>
+            </div>
+
+            <div class="crm-board-shell">
+              <div class="crm-board-scroll">
+                <div class="crm-board-head" id="crmFullHead"></div>
+                <div class="crm-board-body" id="crmFullTableBody" aria-live="polite"></div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section class="page-panel" id="activityPage" aria-label="销售动态">
-          <div class="table-wrap">
+        <section class="page-panel activity-page" id="activityPage" aria-label="销售动态">
+          <div class="activity-toolbar">
+            <button type="button" class="activity-sort" id="salesActivitySortButton" aria-label="切换时间排序">
+              <span class="activity-sort-label">按时间排序</span>
+              <span class="activity-sort-caret" aria-hidden="true">▾</span>
+            </button>
+
+            <div class="activity-toolbar-actions">
+              <button type="button" class="activity-date" id="salesActivityDateButton" aria-label="选择日期范围">
+                日期筛选
+              </button>
+              <label class="activity-search" for="salesActivitySearchInput">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <circle cx="11" cy="11" r="6.2" fill="none" stroke="currentColor" stroke-width="1.7" />
+                  <path d="M15.6 15.6L20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                </svg>
+                <input id="salesActivitySearchInput" type="search" placeholder="输入" aria-label="搜索销售动态" />
+              </label>
+              <button type="button" class="activity-filter" id="salesActivityFilterButton" aria-label="筛选">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path
+                    d="M4.5 6h15l-5.8 6.7v4.5l-3.4 1.8v-6.3L4.5 6Z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span>筛选</span>
+              </button>
+              <button type="button" class="activity-more" id="salesActivityMoreButton" aria-label="更多操作">⋯</button>
+            </div>
+          </div>
+
+          <div class="table-wrap activity-table-wrap">
             <table>
               <thead>
                 <tr id="salesActivityHead"></tr>
@@ -150,7 +213,7 @@
       </main>
     </div>
 
-    <div class="date-range-modal" id="customRangeModal" hidden>
+        <div class="date-range-modal" id="customRangeModal" hidden>
       <div class="date-range-backdrop" id="customRangeBackdrop" aria-hidden="true"></div>
         <section class="date-range-dialog" id="customRangeDialog" role="dialog" aria-modal="true" aria-labelledby="customRangeTitle">
           <header class="date-range-dialog-header">
@@ -187,7 +250,86 @@
       </section>
     </div>
 
-        <div class="chat-widget" id="chatWidget">
+    <div class="admin-modal" id="adminModal" hidden>
+      <div class="admin-modal-backdrop" id="adminModalBackdrop" aria-hidden="true"></div>
+      <section class="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+        <header class="admin-dialog-header">
+          <div>
+            <p class="admin-dialog-eyebrow">团队管理</p>
+            <h3 id="adminModalTitle">账号管理</h3>
+          </div>
+          <button type="button" class="admin-dialog-close" id="adminModalClose" aria-label="关闭后台管理">×</button>
+        </header>
+
+        <div class="admin-dialog-toolbar">
+          <div class="admin-dialog-summary" id="adminAccountSummary"></div>
+          <button type="button" class="admin-dialog-action" id="adminRefreshButton">刷新列表</button>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>账号</th>
+                <th>手机/邮箱</th>
+                <th>用户名</th>
+                <th>积分</th>
+                <th>最近活跃</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <div class="admin-edit-modal" id="adminEditModal" hidden>
+      <div class="admin-modal-backdrop" id="adminEditBackdrop" aria-hidden="true"></div>
+      <section class="admin-edit-dialog" role="dialog" aria-modal="true" aria-labelledby="adminEditTitle">
+        <header class="admin-dialog-header">
+          <div>
+            <p class="admin-dialog-eyebrow">账号修改</p>
+            <h3 id="adminEditTitle">修改手机号 / 邮箱</h3>
+          </div>
+          <button type="button" class="admin-dialog-close" id="adminEditClose" aria-label="关闭修改弹窗">×</button>
+        </header>
+
+        <div class="admin-edit-summary" id="adminEditSummary"></div>
+
+        <div class="admin-edit-form">
+          <label class="admin-edit-field">
+            <span>修改类型</span>
+            <div class="admin-edit-segment" id="adminEditTypeGroup" role="radiogroup" aria-label="修改类型">
+              <button type="button" class="admin-edit-segment-button is-active" data-contact-type="phone" aria-pressed="true">手机号</button>
+              <button type="button" class="admin-edit-segment-button" data-contact-type="email" aria-pressed="false">邮箱</button>
+            </div>
+          </label>
+
+          <label class="admin-edit-field">
+            <span>新手机号 / 邮箱</span>
+            <input id="adminEditContactInput" type="text" placeholder="输入手机号或邮箱" />
+          </label>
+
+          <div class="admin-edit-row">
+            <button type="button" class="admin-edit-primary" id="adminSendInviteButton">发送邀请码</button>
+            <span class="admin-edit-hint" id="adminInviteHint">先填写新手机号或邮箱</span>
+          </div>
+
+          <label class="admin-edit-field">
+            <span>邀请码</span>
+            <input id="adminInviteCodeInput" type="text" placeholder="输入 6 位邀请码" maxlength="6" />
+          </label>
+
+          <div class="admin-edit-actions">
+            <button type="button" class="admin-edit-secondary" id="adminEditCancelButton">取消</button>
+            <button type="button" class="admin-edit-primary" id="adminEditConfirmButton">确认修改</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="chat-widget" id="chatWidget">
       <section class="chat-panel" id="chatPanel" hidden aria-label="AI 助手">
         <header class="chat-header">
           <div class="chat-brand">
