@@ -1,5 +1,9 @@
 ﻿const stressMode = new URLSearchParams(window.location.search).has("stress");
 const memberPlaceholderAvatar = "./assets/member-placeholder.png";
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
+}
+
 function formatReportDate(date) {
   return date.toLocaleDateString("zh-CN", {
     year: "numeric",
@@ -233,84 +237,111 @@ const crmRecords = stressMode
 const salesActivities = stressMode
   ? [
       {
-        time: "09:12",
-        tag: "合同回传",
-        level: "safe",
-        title: "Ava 推进星炬制造合同复核",
-        body: "法务已回传修订版，补充了签署页与回款节点，预计今日完成最终确认。",
+        time: "18:22",
+        person: "Ava",
+        target: "星炬制造 / 智造协同平台二期",
+        action: "修改状态备注：法务已回传修订版，补充签署页与回款节点，待销售确认后归档。",
       },
       {
-        time: "10:40",
-        tag: "商机推进",
-        level: "focus",
-        title: "Mia 更新医疗行业方案演示",
-        body: "客户侧已确认演示窗口，当前重点是把采购、业务和 IT 三方的关注点对齐。",
+        time: "17:36",
+        person: "Mia",
+        target: "泰和医疗 / 重点客户经营平台",
+        action: "新建跟进：已确认演示窗口，采购、业务和 IT 三方关注点已同步。",
       },
       {
-        time: "13:15",
-        tag: "风险跟进",
-        level: "warn",
-        title: "Lina 重新激活两个停滞商机",
-        body: "其中一个项目已超过 15 天未更新，已补充下一次会议时间和决策人名单。",
+        time: "16:48",
+        person: "Lina",
+        target: "北辰零售 / 渠道会员系统",
+        action: "修改状态备注：补充下一次会议时间与决策人名单，等待客户侧确认。",
       },
       {
-        time: "15:20",
-        tag: "丢单复盘",
-        level: "warn",
-        title: "Joe 补充本月丢单原因记录",
-        body: "主要集中在预算审批延迟和业务侧未明确下一步目标，已转入复盘列表。",
+        time: "15:32",
+        person: "Joe",
+        target: "海辰教育 / 校园招采系统",
+        action: "完成跟进：预算审批延迟与业务目标不清晰已记录为复盘原因。",
+      },
+      {
+        time: "14:05",
+        person: "Ava",
+        target: "星炬制造 / 智造协同平台二期",
+        action: "上传文件：回款计划表已同步给财务并附回传确认截图。",
+      },
+      {
+        time: "12:44",
+        person: "Mia",
+        target: "泰和医疗 / 重点客户经营平台",
+        action: "修改状态备注：演示材料已补充采购关注点，等待二次评审。",
+      },
+      {
+        time: "11:18",
+        person: "Lina",
+        target: "北辰零售 / 渠道会员系统",
+        action: "新建跟进：补录上周会议纪要，客户仍在内部讨论。",
+      },
+      {
+        time: "09:06",
+        person: "Joe",
+        target: "山川物流 / 运输协同平台",
+        action: "修改状态备注：更新今日排期与待办，确认下午复盘。",
       },
     ]
   : [
       {
-        time: "09:08",
-        tag: "签约推进",
-        level: "safe",
-        title: "Ava 完成星炬制造条款确认",
-        body: "客户已确认付款节点，法务版本进入最终审核，预计今天下午可完成回传。",
+        time: "18:11",
+        person: "Ava",
+        target: "星炬制造 / 智造协同平台二期",
+        action: "修改状态备注：客户已确认付款节点，法务版本进入最终审核。",
       },
       {
-        time: "10:26",
-        tag: "方案评审",
-        level: "focus",
-        title: "Mia 向泰和医疗补充演示材料",
-        body: "采购与业务部门已参加评审，当前等待 IT 安全项补充说明。",
+        time: "17:40",
+        person: "Mia",
+        target: "泰和医疗 / 重点客户经营平台",
+        action: "上传文件：补充了 IT 安全项说明和演示材料最新版。",
       },
       {
-        time: "12:14",
-        tag: "重点跟进",
-        level: "warn",
-        title: "Lina 更新北辰零售商机状态",
-        body: "该项目已超过 15 天未更新，已补发会议纪要并锁定下次沟通时间。",
+        time: "16:28",
+        person: "Lina",
+        target: "北辰零售 / 渠道会员系统",
+        action: "完成跟进：已补发会议纪要并锁定下次沟通时间。",
       },
       {
-        time: "14:55",
-        tag: "团队复盘",
-        level: "focus",
-        title: "Joe 提交渠道会员系统复盘",
-        body: "本轮卡点集中在预算确认和回款节点，下一步改为先推进 POC 结果确认。",
+        time: "15:19",
+        person: "Joe",
+        target: "山川物流 / 运输协同平台",
+        action: "修改状态备注：卡点集中在预算确认和回款节点，已转入复盘。",
       },
       {
-        time: "16:40",
-        tag: "日报同步",
-        level: "safe",
-        title: "团队完成今日销售简报更新",
-        body: "客户商机、风险与跟进动作已同步到日报，便于晚间例会直接复盘。",
+        time: "13:52",
+        person: "Ava",
+        target: "星炬制造 / 智造协同平台二期",
+        action: "新建跟进：首付款节点已确认，财务同步了回款计划。",
+      },
+      {
+        time: "12:37",
+        person: "Mia",
+        target: "泰和医疗 / 重点客户经营平台",
+        action: "上传文件：补充采购关注点附件，等待二次评审安排。",
+      },
+      {
+        time: "11:06",
+        person: "Lina",
+        target: "海辰教育 / 校园招采系统",
+        action: "修改状态备注：补录上周会议纪要，客户仍在内部讨论。",
+      },
+      {
+        time: "09:14",
+        person: "Joe",
+        target: "山川物流 / 运输协同平台",
+        action: "新建跟进：客户商机、风险与待办已同步到日志。",
       },
     ];
 
 const dashboardDocument = {
   title: "销售团队看板",
   ui: {
-    heroTitle: "销售团队看板",
-    dateCardLabel: "查看日期",
-    datePickerAriaLabel: "选择日期",
-    dateShortcutsAriaLabel: "快速切换日期",
-    dateShortcuts: [
-      { label: "昨天", offset: -1 },
-      { label: "前天", offset: -2 },
-      { label: "大前天", offset: -3 },
-    ],
+    rangeStartLabel: "开始日期",
+    rangeEndLabel: "结束日期",
+    rangeApplyLabel: "应用",
     chatFabLabel: "AI",
     chatFabAriaLabel: "打开 AI 助手",
     chatTitle: "AI 助手",
@@ -319,9 +350,6 @@ const dashboardDocument = {
     chatInputLabel: "输入问题",
     chatPlaceholder: "例如：今年目标还差多少？哪些 B 级客户超过 15 天未跟进？",
   },
-  heroSummary: `年度达成 ${Math.round(reportContext.teamRate * 100)}% · 已完成 ${formatCompactCurrency(
-    reportContext.achieved
-  )} · 商机缺口 ${formatCompactCurrency(reportContext.opportunityGap)} · 风险项 ${reportContext.highRiskItems}`,
   sections: {
     overview: {
       heading: "综合统计",
@@ -444,13 +472,22 @@ const dashboardDocument = {
 };
 
 const today = reportBaseDate;
-const heroTitle = document.getElementById("heroTitle");
-const todayLabel = document.getElementById("todayLabel");
-const dateCardLabel = document.getElementById("dateCardLabel");
-const datePicker = document.getElementById("datePicker");
-const dateShortcuts = document.getElementById("dateShortcuts");
-const dateShortcutButtons = document.querySelectorAll(".date-shortcut");
-const heroSummary = document.getElementById("heroSummary");
+let selectedRangeStart = new Date(today);
+let selectedRangeEnd = new Date(today);
+let activeTimeScope = "day";
+let customRangeOpen = false;
+const rangeStartPicker = document.getElementById("rangeStartPicker");
+const rangeEndPicker = document.getElementById("rangeEndPicker");
+const applyRangeButton = document.getElementById("applyRangeButton");
+const customRangeModal = document.getElementById("customRangeModal");
+const customRangeBackdrop = document.getElementById("customRangeBackdrop");
+const customRangeCloseButton = document.getElementById("customRangeClose");
+const customRangeButton = document.querySelector('[data-time-scope="custom"]');
+const timeScopeSwitcher = document.getElementById("timeScopeSwitcher");
+const timeScopePrevButton = document.getElementById("timeScopePrev");
+const timeScopeNextButton = document.getElementById("timeScopeNext");
+const timeScopeButtons = document.querySelectorAll("[data-time-scope]");
+const periodNote = document.getElementById("periodNote");
 const overviewHeading = document.getElementById("overviewHeading");
 const memberHeading = document.getElementById("memberHeading");
 const riskHeading = document.getElementById("riskHeading");
@@ -472,11 +509,10 @@ const pageTabButtons = document.querySelectorAll("[data-page-tab]");
 const dashboardGrid = document.querySelector(".dashboard-grid");
 const tablePage = document.getElementById("tablePage");
 const activityPage = document.getElementById("activityPage");
-const crmFullTitle = document.getElementById("crmFullTitle");
 const crmFullHead = document.getElementById("crmFullHead");
 const crmFullTableBody = document.getElementById("crmFullTableBody");
-const salesActivityTitle = document.getElementById("salesActivityTitle");
 const salesActivityFeed = document.getElementById("salesActivityFeed");
+const salesActivityHead = document.getElementById("salesActivityHead");
 const chatMessages = document.getElementById("chatMessages");
 const chatInput = document.getElementById("chatInput");
 const chatSubmit = document.getElementById("chatSubmit");
@@ -491,16 +527,24 @@ const overviewSection = document.getElementById("overviewSection");
 const memberSection = document.getElementById("memberSection");
 const riskSection = document.getElementById("riskSection");
 const crmSection = document.getElementById("crmSection");
+const generateNowButton = document.getElementById("generateNowButton");
 let activePageTab = "team";
+let dashboardGenerated = false;
 
 const streamRevealQueue = [];
 let streamRevealCounter = 0;
+let streamRevealStarted = false;
 const typewriterQueue = [];
 let typewriterCounter = 0;
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function queueStreamReveal(element, delay = null) {
   if (!element) {
+    return;
+  }
+
+  if (streamRevealStarted) {
+    element.classList.add("is-visible");
     return;
   }
 
@@ -512,6 +556,7 @@ function queueStreamReveal(element, delay = null) {
 }
 
 function playStreamReveal() {
+  streamRevealStarted = true;
   requestAnimationFrame(() => {
     streamRevealQueue.forEach((element) => {
       const delay = Number.parseFloat(element.style.getPropertyValue("--stream-delay")) || 0;
@@ -520,6 +565,12 @@ function playStreamReveal() {
       }, delay);
     });
   });
+}
+
+function resetStreamRevealState() {
+  streamRevealQueue.length = 0;
+  streamRevealCounter = 0;
+  streamRevealStarted = false;
 }
 
 function queueTypewriter(element, text, speed = 26, delay = null) {
@@ -601,6 +652,232 @@ function formatDateLabel(date) {
     day: "numeric",
     weekday: "long",
   });
+}
+
+function formatRangeLabel(startDate, endDate) {
+  const start = startDate.toLocaleDateString("zh-CN", {
+    month: "numeric",
+    day: "numeric",
+  });
+  const end = endDate.toLocaleDateString("zh-CN", {
+    month: "numeric",
+    day: "numeric",
+  });
+  return `${start} - ${end}`;
+}
+
+function formatShortDateLabel(date) {
+  return date.toLocaleDateString("zh-CN", {
+    month: "numeric",
+    day: "numeric",
+  });
+}
+
+function getCustomRangeButtonLabel() {
+  const range = getRangeLabel(selectedRangeStart, selectedRangeEnd);
+  return range || "自定义";
+}
+
+function getScopeTooltip(scope) {
+  const range = getScopeRangeForDate(selectedRangeEnd || today, scope);
+  const currentLabel = getRangeLabel(range.start, range.end);
+
+  if (scope === "day") {
+    const comparison = shiftDate(range.start, -1);
+    return `今日 ${currentLabel} · 上期 ${formatShortDateLabel(comparison)}`;
+  }
+
+  if (scope === "week") {
+    const comparisonStart = shiftDate(range.start, -7);
+    const comparisonEnd = shiftDate(range.end, -7);
+    return `本周 ${currentLabel} · 上期 ${formatRangeLabel(comparisonStart, comparisonEnd)}`;
+  }
+
+  if (scope === "month") {
+    const comparisonEnd = new Date(range.start);
+    comparisonEnd.setDate(0);
+    const comparisonStart = new Date(comparisonEnd.getFullYear(), comparisonEnd.getMonth(), 1);
+    return `本月 ${currentLabel} · 上期 ${formatRangeLabel(comparisonStart, comparisonEnd)}`;
+  }
+
+  return "自定义区间";
+}
+
+function getWeekRange(date) {
+  const start = new Date(date);
+  const dayIndex = (start.getDay() + 6) % 7;
+  start.setDate(start.getDate() - dayIndex);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 6);
+  return { start, end };
+}
+
+function getMonthRange(date) {
+  const start = new Date(date.getFullYear(), date.getMonth(), 1);
+  const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  return { start, end };
+}
+
+function getScopeLabel(scope) {
+  if (scope === "week") {
+    return "本周";
+  }
+  if (scope === "month") {
+    return "本月";
+  }
+  if (scope === "custom") {
+    return "自定义区间";
+  }
+  return "今日";
+}
+
+function getScopeRevenue(scope) {
+  if (scope === "week") {
+    return reportContext.revenueWeek;
+  }
+  if (scope === "month") {
+    return reportContext.revenueMonth;
+  }
+  if (scope === "custom") {
+    const days = Math.max(Math.round((selectedRangeEnd - selectedRangeStart) / 86400000) + 1, 1);
+    return Math.round((reportContext.revenueWeek / 7) * days);
+  }
+  return reportContext.revenueToday;
+}
+
+function getRangeLabel(start, end) {
+  if (!start || !end) {
+    return "";
+  }
+
+  if (start.toDateString() === end.toDateString()) {
+    return start.toLocaleDateString("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  }
+
+  return formatRangeLabel(start, end);
+}
+
+function getScopeRangeForDate(date, scope) {
+  if (scope === "week") {
+    return getWeekRange(date);
+  }
+
+  if (scope === "month") {
+    return getMonthRange(date);
+  }
+
+  return { start: new Date(date), end: new Date(date) };
+}
+
+function getCurrentRange() {
+  if (activeTimeScope === "custom") {
+    return { start: selectedRangeStart, end: selectedRangeEnd };
+  }
+
+  return getScopeRangeForDate(selectedRangeEnd, activeTimeScope);
+}
+
+function getComparisonRange() {
+  const currentRange = getCurrentRange();
+  const currentDays = Math.max(Math.round((currentRange.end - currentRange.start) / 86400000) + 1, 1);
+
+  if (activeTimeScope === "day") {
+    const prev = shiftDate(currentRange.start, -1);
+    return { start: prev, end: prev };
+  }
+
+  if (activeTimeScope === "week") {
+    return {
+      start: shiftDate(currentRange.start, -7),
+      end: shiftDate(currentRange.end, -7),
+    };
+  }
+
+  if (activeTimeScope === "month") {
+    const prevMonthEnd = new Date(currentRange.start);
+    prevMonthEnd.setDate(0);
+    const prevMonthStart = new Date(prevMonthEnd.getFullYear(), prevMonthEnd.getMonth(), 1);
+    return { start: prevMonthStart, end: prevMonthEnd };
+  }
+
+  return {
+    start: shiftDate(currentRange.start, -currentDays),
+    end: shiftDate(currentRange.end, -currentDays),
+  };
+}
+
+function getComparisonLabel() {
+  const range = getComparisonRange();
+  return getRangeLabel(range.start, range.end);
+}
+
+function getCurrentRevenue() {
+  if (activeTimeScope === "custom") {
+    const currentRange = getCurrentRange();
+    const days = Math.max(Math.round((currentRange.end - currentRange.start) / 86400000) + 1, 1);
+    return Math.round((reportContext.revenueWeek / 7) * days);
+  }
+
+  return getScopeRevenue(activeTimeScope);
+}
+
+function getComparisonRevenue() {
+  if (activeTimeScope === "day") {
+    return Math.round(reportContext.revenueToday * 0.88);
+  }
+
+  if (activeTimeScope === "week") {
+    return Math.round(reportContext.revenueWeek * 0.9);
+  }
+
+  if (activeTimeScope === "month") {
+    return Math.round(reportContext.revenueMonth * 0.92);
+  }
+
+  const comparisonRange = getComparisonRange();
+  const days = Math.max(Math.round((comparisonRange.end - comparisonRange.start) / 86400000) + 1, 1);
+  return Math.round((reportContext.revenueWeek / 7) * days * 0.92);
+}
+
+function shiftScopeRange(direction) {
+  const currentRange = getCurrentRange();
+
+  if (activeTimeScope === "day") {
+    const shifted = shiftDate(currentRange.end, direction);
+    selectedRangeStart = new Date(shifted);
+    selectedRangeEnd = new Date(shifted);
+    return;
+  }
+
+  if (activeTimeScope === "week") {
+    selectedRangeStart = shiftDate(currentRange.start, direction * 7);
+    selectedRangeEnd = shiftDate(currentRange.end, direction * 7);
+    return;
+  }
+
+  if (activeTimeScope === "month") {
+    selectedRangeStart = new Date(currentRange.start);
+    selectedRangeStart.setMonth(selectedRangeStart.getMonth() + direction);
+    selectedRangeStart.setDate(1);
+    selectedRangeEnd = new Date(selectedRangeStart.getFullYear(), selectedRangeStart.getMonth() + 1, 0);
+    return;
+  }
+
+  const days = Math.max(Math.round((currentRange.end - currentRange.start) / 86400000) + 1, 1);
+  selectedRangeStart = shiftDate(currentRange.start, direction * days);
+  selectedRangeEnd = shiftDate(currentRange.end, direction * days);
+}
+
+function applyScopeShift(direction) {
+  shiftScopeRange(direction);
+  syncRangeInputs();
+  syncCustomRangeVisibility();
+  renderHero();
+  invalidateDashboardGeneration();
 }
 
 function createElement(tagName, className, text) {
@@ -733,34 +1010,94 @@ function shiftDate(baseDate, offsetDays) {
   return shifted;
 }
 
-function syncDateShortcutState(offset) {
-  if (!dateShortcuts) {
-    return;
-  }
-
-  dateShortcuts.querySelectorAll(".date-shortcut").forEach((button) => {
-    button.classList.toggle("is-active", Number(button.dataset.offset) === offset);
+function syncTimeScopeState(scope) {
+  timeScopeButtons.forEach((button) => {
+    const isActive = button.dataset.timeScope === scope;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+    const buttonScope = button.dataset.timeScope || "day";
+    button.title = getScopeTooltip(buttonScope);
+    if (buttonScope === "day") {
+      button.textContent = "日统计";
+    } else if (buttonScope === "week") {
+      button.textContent = "周统计";
+    } else if (buttonScope === "month") {
+      button.textContent = "月统计";
+    } else if (buttonScope === "custom") {
+      button.textContent = isActive ? getCustomRangeButtonLabel() : "自定义";
+    }
   });
 }
 
-function applySelectedDate(date, shortcutOffset = null) {
-  const selectedDate = new Date(date);
-  if (datePicker) {
-    datePicker.value = formatDateInputValue(selectedDate);
+function setTimeScope(scope) {
+  activeTimeScope = scope;
+  if (scope !== "custom") {
+    customRangeOpen = false;
+    const referenceDate = selectedRangeEnd || today;
+    const range = getScopeRangeForDate(referenceDate, scope);
+    selectedRangeStart = range.start;
+    selectedRangeEnd = range.end;
   }
-  syncDateShortcutState(shortcutOffset);
-  renderHero(selectedDate);
+  syncTimeScopeState(scope);
+  syncRangeInputs();
+  syncCustomRangeVisibility();
+  renderHero();
+  invalidateDashboardGeneration();
+}
+
+function applySelectedRange(start, end, scope = "custom") {
+  selectedRangeStart = new Date(start);
+  selectedRangeEnd = new Date(end);
+  if (selectedRangeEnd < selectedRangeStart) {
+    const swap = selectedRangeStart;
+    selectedRangeStart = selectedRangeEnd;
+    selectedRangeEnd = swap;
+  }
+  activeTimeScope = scope;
+  customRangeOpen = false;
+  syncTimeScopeState(scope);
+  syncRangeInputs();
+  syncCustomRangeVisibility();
+  renderHero();
+  invalidateDashboardGeneration();
+}
+
+function syncRangeInputs() {
+  if (rangeStartPicker) {
+    rangeStartPicker.value = formatDateInputValue(selectedRangeStart);
+  }
+  if (rangeEndPicker) {
+    rangeEndPicker.value = formatDateInputValue(selectedRangeEnd);
+  }
+}
+
+function syncCustomRangeVisibility() {
+  if (!customRangeModal) {
+    return;
+  }
+  customRangeModal.hidden = !(activeTimeScope === "custom" && customRangeOpen);
+}
+
+function openCustomRangePicker() {
+  if (!customRangeModal) {
+    return;
+  }
+
+  customRangeOpen = true;
+  syncRangeInputs();
+  syncCustomRangeVisibility();
+  if (rangeStartPicker) {
+    window.setTimeout(() => rangeStartPicker.focus(), 0);
+  }
+}
+
+function closeCustomRangePicker() {
+  customRangeOpen = false;
+  syncCustomRangeVisibility();
 }
 
 function renderPageDocument() {
-  if (heroTitle) {
-    heroTitle.textContent = dashboardDocument.ui.heroTitle;
-  }
-
   document.title = dashboardDocument.title;
-  if (heroSummary) {
-    heroSummary.textContent = "";
-  }
   renderMarkdownInto(
     overviewHeading,
     dashboardDocument.sections.overview.heading
@@ -790,35 +1127,17 @@ function renderPageDocument() {
     "panel-heading-prose card-markdown"
   );
 
-  const heroTitleRow = document.querySelector(".hero-title-row");
-  if (heroTitleRow && !heroTitleRow.querySelector(".hero-logo")) {
-    const logo = document.createElement("img");
-    logo.className = "hero-logo";
-    logo.src = "./assets/site-logo.png";
-    logo.alt = "网站 Logo";
-    heroTitleRow.insertBefore(logo, heroTitleRow.firstChild);
+  if (rangeStartPicker) {
+    rangeStartPicker.setAttribute("aria-label", dashboardDocument.ui.rangeStartLabel);
   }
 
-  if (dateShortcuts) {
-    dateShortcuts.setAttribute("aria-label", dashboardDocument.ui.dateShortcutsAriaLabel);
+  if (rangeEndPicker) {
+    rangeEndPicker.setAttribute("aria-label", dashboardDocument.ui.rangeEndLabel);
   }
 
-  if (dateCardLabel) {
-    dateCardLabel.textContent = dashboardDocument.ui.dateCardLabel;
+  if (applyRangeButton) {
+    applyRangeButton.textContent = dashboardDocument.ui.rangeApplyLabel;
   }
-
-  if (datePicker) {
-    datePicker.setAttribute("aria-label", dashboardDocument.ui.datePickerAriaLabel);
-  }
-
-  dateShortcutButtons.forEach((button, index) => {
-    const config = dashboardDocument.ui.dateShortcuts[index];
-    if (!config) {
-      return;
-    }
-    button.textContent = config.label;
-    button.dataset.offset = config.offset;
-  });
 
   if (chatToggle) {
     chatToggle.setAttribute("aria-label", dashboardDocument.ui.chatFabAriaLabel);
@@ -852,17 +1171,44 @@ function renderPageDocument() {
     }
   }
 
-  queueStreamReveal(statusOverviewSection, 0);
-  queueStreamReveal(heroTitle?.closest(".hero-main"), 80);
-  queueStreamReveal(document.querySelector(".hero-top-meta"), 180);
-  queueStreamReveal(heroSummary, 280);
-  queueStreamReveal(overviewSection, 380);
-  queueStreamReveal(memberSection, 880);
-  queueStreamReveal(riskSection, 1320);
-  queueStreamReveal(crmSection, 1760);
+}
 
-  queueTypewriter(heroTitle, dashboardDocument.ui.heroTitle, 30, 160);
-  queueTypewriter(heroSummary, dashboardDocument.heroSummary, 22, 420);
+function clearDashboardContent() {
+  overviewMetrics.replaceChildren();
+  teamDailyList.replaceChildren();
+  memberAlignedRows.replaceChildren();
+  riskBoard.replaceChildren();
+  crmOverallTableBody.replaceChildren();
+  crmCustomerTableBody.replaceChildren();
+  crmOpportunityTableBody.replaceChildren();
+  crmOverallTableHead?.replaceChildren();
+  crmCustomerTableHead?.replaceChildren();
+  crmOpportunityTableHead?.replaceChildren();
+}
+
+function setDashboardGenerationState(generated) {
+  dashboardGenerated = generated;
+  document.body.dataset.dashboardState = generated ? "generated" : "empty";
+}
+
+function invalidateDashboardGeneration() {
+  resetStreamRevealState();
+  clearDashboardContent();
+  setDashboardGenerationState(false);
+}
+
+function generateDashboardContent() {
+  clearDashboardContent();
+  resetStreamRevealState();
+  setDashboardGenerationState(true);
+  renderOverviewRichtext();
+  renderMembersRefined();
+  renderRiskBoard();
+  renderCrmHeaders();
+  renderCrmTable();
+  renderCrmFullTable();
+  renderSalesActivities();
+  playStreamReveal();
 }
 
 function getStats() {
@@ -882,8 +1228,14 @@ function getStats() {
   };
 }
 
-function renderHero(selectedDate) {
-  todayLabel.textContent = formatDateLabel(selectedDate);
+function renderHero() {
+  const currentRange = getCurrentRange();
+  const currentRangeLabel = getRangeLabel(currentRange.start, currentRange.end);
+  if (periodNote) {
+    periodNote.textContent =
+      activeTimeScope === "day" ? currentRangeLabel : `${getScopeLabel(activeTimeScope)} ${currentRangeLabel}`;
+  }
+  syncTimeScopeState(activeTimeScope);
 }
 
 function createStandardCard({
@@ -1139,13 +1491,18 @@ function answerQuestion(question) {
   }
 
   if (q.includes("\u62a5\u544a") || q.includes("\u603b\u7ed3") || q.includes("\u6c47\u62a5")) {
-    return `${reportContext.reportTimeLabel}\uff0c\u5e74\u5ea6\u76ee\u6807 ${formatCompactCurrency(
+    return `${getScopeLabel(activeTimeScope)}（${getRangeLabel(
+      getCurrentRange().start,
+      getCurrentRange().end
+    )}）\uff0c\u5bf9\u6bd4 ${getComparisonLabel()}\uff0c\u5e74\u5ea6\u76ee\u6807 ${formatCompactCurrency(
       reportContext.annualTarget
     )}\uff0c\u5df2\u5b8c\u6210 ${formatCompactCurrency(
       reportContext.achieved
     )}\uff0c\u9636\u6bb5\u8fbe\u6210 ${Math.round(
       reportContext.teamRate * 100
-    )}%\u3002\u82e5\u5546\u673a\u6c60\u8865\u8db3\uff0c\u5168\u5e74\u6709\u671b\u51b2\u5230 ${formatCompactCurrency(
+    )}%\u3002\u672c\u671f\u65b0\u589e\u6536\u5165 ${formatCompactCurrency(
+      getCurrentRevenue()
+    )}\uff0c\u82e5\u5546\u673a\u6c60\u8865\u8db3\uff0c\u5168\u5e74\u6709\u671b\u51b2\u5230 ${formatCompactCurrency(
       reportContext.forecastPotential
     )}\u3002`;
   }
@@ -1164,7 +1521,9 @@ function answerQuestion(question) {
   }
 
   if (q.includes("\u65b0\u589e\u6536\u5165") || q.includes("\u6536\u5165")) {
-    return `\u65b0\u589e\u6536\u5165\u4e3a\u4eca\u65e5 ${formatCompactCurrency(
+    return `\u5f53\u524d${getScopeLabel(activeTimeScope)}\u65b0\u589e\u6536\u5165 ${formatCompactCurrency(
+      getCurrentRevenue()
+    )}\uff0c\u540c\u65f6\u53ef\u53c2\u8003\u4eca\u65e5 ${formatCompactCurrency(
       reportContext.revenueToday
     )}\uff0c\u672c\u5468 ${formatCompactCurrency(
       reportContext.revenueWeek
@@ -1218,13 +1577,6 @@ function addMessage(role, content) {
 function renderCrmHeaders() {
   const [overallTable, customerTable, opportunityTable] =
     dashboardDocument.sections.crm.tables;
-
-  if (crmFullTitle) {
-    crmFullTitle.textContent = dashboardDocument.sections.crm.fullTitle;
-  }
-  if (salesActivityTitle) {
-    salesActivityTitle.textContent = dashboardDocument.sections.crm.activityTitle;
-  }
 
   const headers = [
     [crmOverallTitle, overallTable.title, crmOverallTableHead, overallTable.columns],
@@ -1301,25 +1653,24 @@ function renderCrmFullTable() {
 }
 
 function renderSalesActivities() {
-  if (!salesActivityFeed) {
+  if (!salesActivityFeed || !salesActivityHead) {
     return;
   }
 
+  salesActivityHead.replaceChildren();
+  ["时间", "人员", "客户/商机", "操作日志"].forEach((column) => {
+    salesActivityHead.appendChild(createElement("th", "", column));
+  });
+
   salesActivityFeed.replaceChildren();
   salesActivities.forEach((activity, index) => {
-    const item = createElement("article", "activity-item card-standard");
-    const meta = createElement("div", "activity-meta");
-    meta.appendChild(createElement("span", "activity-time", activity.time));
-    meta.appendChild(createElement("span", `activity-tag ${activity.level}`, activity.tag));
-
-    const title = createElement("h4", "activity-title", activity.title);
-    const body = createElement("p", "activity-body", activity.body);
-
-    item.appendChild(meta);
-    item.appendChild(title);
-    item.appendChild(body);
-    salesActivityFeed.appendChild(item);
-    queueStreamReveal(item, 140 + index * 120);
+    const row = document.createElement("tr");
+    row.appendChild(createElement("td", "activity-time", activity.time));
+    row.appendChild(createElement("td", "activity-person", activity.person || ""));
+    row.appendChild(createElement("td", "activity-subject", activity.target || ""));
+    row.appendChild(createElement("td", "activity-log", activity.action || ""));
+    salesActivityFeed.appendChild(row);
+    queueStreamReveal(row, 140 + index * 120);
   });
 }
 
@@ -1333,24 +1684,7 @@ function syncPageTabState(tabName) {
 }
 
 function setPageView(tabName) {
-  const isTeam = tabName === "team";
-  if (dashboardGrid) {
-    dashboardGrid.hidden = !isTeam;
-    dashboardGrid.style.display = isTeam ? "" : "none";
-    dashboardGrid.setAttribute("aria-hidden", String(!isTeam));
-  }
-  if (statusOverviewSection) {
-    statusOverviewSection.hidden = !isTeam;
-    statusOverviewSection.style.display = isTeam ? "" : "none";
-  }
-  if (tablePage) {
-    tablePage.hidden = tabName !== "table";
-    tablePage.style.display = tabName === "table" ? "" : "none";
-  }
-  if (activityPage) {
-    activityPage.hidden = tabName !== "activity";
-    activityPage.style.display = tabName === "activity" ? "" : "none";
-  }
+  document.body.dataset.pageView = tabName;
   syncPageTabState(tabName);
 }
 
@@ -1367,27 +1701,94 @@ function setupPageTabs() {
 }
 
 function initializeDate() {
-  applySelectedDate(today, null);
+  applySelectedRange(today, today, "day");
 
-  if (dateShortcuts) {
-    dateShortcuts.addEventListener("click", (event) => {
-      const button = event.target.closest(".date-shortcut");
-      if (!button) {
+  syncTimeScopeState(activeTimeScope);
+  syncRangeInputs();
+  syncCustomRangeVisibility();
+
+  timeScopeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const scope = button.dataset.timeScope || "day";
+      if (scope === "custom") {
+        setTimeScope(scope);
+        openCustomRangePicker();
         return;
       }
+      setTimeScope(scope);
+    });
+  });
 
-      const offset = Number(button.dataset.offset || 0);
-      applySelectedDate(shiftDate(today, offset), offset);
+  if (timeScopePrevButton) {
+    timeScopePrevButton.addEventListener("click", () => {
+      applyScopeShift(-1);
     });
   }
 
-  datePicker.addEventListener("input", (event) => {
-    if (!event.target.value) {
-      return;
-    }
+  if (timeScopeNextButton) {
+    timeScopeNextButton.addEventListener("click", () => {
+      applyScopeShift(1);
+    });
+  }
 
-    applySelectedDate(new Date(`${event.target.value}T12:00:00`), null);
+  if (applyRangeButton) {
+    applyRangeButton.addEventListener("click", () => {
+      if (!rangeStartPicker?.value || !rangeEndPicker?.value) {
+        return;
+      }
+      applySelectedRange(
+        new Date(`${rangeStartPicker.value}T12:00:00`),
+        new Date(`${rangeEndPicker.value}T12:00:00`),
+        "custom"
+      );
+    });
+  }
+
+  if (customRangeBackdrop) {
+    customRangeBackdrop.addEventListener("click", closeCustomRangePicker);
+  }
+
+  if (customRangeCloseButton) {
+    customRangeCloseButton.addEventListener("click", closeCustomRangePicker);
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && customRangeOpen) {
+      closeCustomRangePicker();
+    }
   });
+
+  if (rangeStartPicker) {
+    rangeStartPicker.addEventListener("click", () => {
+      rangeStartPicker.showPicker?.();
+    });
+    rangeStartPicker.addEventListener("change", () => {
+      if (rangeStartPicker.value && rangeEndPicker?.value) {
+        applySelectedRange(
+          new Date(`${rangeStartPicker.value}T12:00:00`),
+          new Date(`${rangeEndPicker.value}T12:00:00`),
+          "custom"
+        );
+      }
+    });
+  }
+
+  if (rangeEndPicker) {
+    rangeEndPicker.addEventListener("click", () => {
+      rangeEndPicker.showPicker?.();
+    });
+    rangeEndPicker.addEventListener("change", () => {
+      if (rangeStartPicker?.value && rangeEndPicker.value) {
+        applySelectedRange(
+          new Date(`${rangeStartPicker.value}T12:00:00`),
+          new Date(`${rangeEndPicker.value}T12:00:00`),
+          "custom"
+        );
+      }
+    });
+  }
+
+  window.scrollTo({ top: 0, behavior: "auto" });
 }
 
 function setupChat() {
@@ -1469,7 +1870,36 @@ function setupChat() {
 }
 
 function renderOverviewRichtext() {
-  const cards = dashboardDocument.sections.overview.metrics;
+  const scopeLabel = getScopeLabel(activeTimeScope);
+  const currentRange = getCurrentRange();
+  const currentRangeLabel = getRangeLabel(currentRange.start, currentRange.end);
+  const comparisonRevenue = getComparisonRevenue();
+  const currentRevenue = getCurrentRevenue();
+  const comparisonRangeLabel = getComparisonLabel();
+  const comparisonRange = getComparisonRange();
+  const comparisonRangeText = getRangeLabel(comparisonRange.start, comparisonRange.end);
+  const cards = [
+    {
+      prefix: "🎯",
+      label: "年度达成",
+      value: `${Math.round(reportContext.teamRate * 100)}%`,
+      note: `目标 ${formatCompactCurrency(reportContext.annualTarget)}，已完成 ${formatCompactCurrency(
+        reportContext.achieved
+      )}`,
+    },
+    {
+      prefix: "📈",
+      label: `${scopeLabel}收入`,
+      value: formatCompactCurrency(currentRevenue),
+      note: `对比 ${formatCompactCurrency(comparisonRevenue)} / ${comparisonRangeText}`,
+    },
+    {
+      prefix: "⚠️",
+      label: "重点风险",
+      value: `${reportContext.highRiskItems}`,
+      note: `商机 ${reportContext.stalledOpportunities} / B 级客户 ${reportContext.overdueBLevelCustomers} / 头部依赖 1`,
+    },
+  ];
 
   overviewMetrics.replaceChildren();
   cards.forEach((metric, index) => {
@@ -1484,7 +1914,36 @@ function renderOverviewRichtext() {
   });
 
   teamDailyList.replaceChildren();
-  dashboardDocument.sections.overview.cards.forEach((cardData, index) => {
+  [
+    {
+      titlePrefix: "📊",
+      title: "业绩达成",
+      body: `**当前周期：** ${scopeLabel}（${currentRangeLabel}）。**对比周期：** ${comparisonRangeLabel}。**年度目标：** ${formatCompactCurrency(
+        reportContext.annualTarget
+      )} / 年。**本期新增收入：** ${formatCompactCurrency(currentRevenue)}。**对比收入：** ${formatCompactCurrency(
+        comparisonRevenue
+      )}。**年度达成：** ${Math.round(
+        reportContext.teamRate * 100
+      )}%。`,
+    },
+    {
+      titlePrefix: "🧭",
+      title: "商机与线索",
+      body: `**线索池：** ${reportContext.newQualifiedLeads} 个有效线索。**商机池：** 预计成交 ${formatCompactCurrency(
+        reportContext.opportunityPool
+      )}，仍缺口 ${formatCompactCurrency(reportContext.opportunityGap)}。**对比周期：** 商机变化需结合 CRM 表查看。**本月丢单：** ${reportContext.monthlyLostDeals} 单。`,
+    },
+    {
+      titlePrefix: "👥",
+      title: "客户与团队",
+      body: `**A 级客户：** 跟进频率正常。**B 级客户：** ${reportContext.overdueBLevelCustomers} 个超 15 天未跟进。**团队强度：** 平均每人每天跟进 ${reportContext.averageDailyTouches} 次。**重点关注：** ${reportContext.focusMembers.join(" / ")}。`,
+    },
+    {
+      titlePrefix: "✅",
+      title: "下一步重点",
+      body: `${reportContext.nextPriorities.slice(0, 3).map((item) => `- ${item}`).join("\n")}`,
+    },
+  ].forEach((cardData, index) => {
     const card = createStandardCard({
       titlePrefix: cardData.titlePrefix,
       title: cardData.title,
@@ -1498,17 +1957,13 @@ function renderOverviewRichtext() {
 function initialize() {
   renderPageDocument();
   initializeDate();
-  renderOverviewRichtext();
-  renderMembersRefined();
-  renderRiskBoard();
-  renderCrmHeaders();
-  renderCrmTable();
-  renderCrmFullTable();
-  renderSalesActivities();
   setupPageTabs();
   setupChat();
   playTypewriter();
-  playStreamReveal();
+
+  if (generateNowButton) {
+    generateNowButton.addEventListener("click", generateDashboardContent);
+  }
 
   addMessage(
     "assistant",

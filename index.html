@@ -12,35 +12,40 @@
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body data-page-view="team" data-dashboard-state="empty">
     <div class="app-shell">
       <main class="main-content">
         <nav class="section-tabs" id="sectionTabs" role="tablist" aria-label="页面切换">
-          <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-page-tab="team">团队看板</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="table">商机表</button>
-          <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="activity">销售动态</button>
+          <div class="section-tabs-inner">
+            <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-page-tab="team">团队看板</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="table">商机表</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="activity">销售动态</button>
+          </div>
         </nav>
 
         <header class="hero" id="statusOverviewSection">
-          <div class="hero-main">
-            <div class="hero-title-row">
-              <h1 id="heroTitle"></h1>
-            </div>
-          </div>
           <div class="hero-top-meta">
-            <div class="date-shortcuts" id="dateShortcuts">
-              <button type="button" class="date-shortcut is-active" data-offset="-1"></button>
-              <button type="button" class="date-shortcut" data-offset="-2"></button>
-              <button type="button" class="date-shortcut" data-offset="-3"></button>
+            <div class="time-range-toolbar" id="timeRangeToolbar">
+              <div class="time-scope-nav" id="timeScopeNav">
+                <button type="button" class="time-scope-step" id="timeScopePrev" aria-label="切换到上一个周期">‹</button>
+                <div class="hero-period-note" id="periodNote"></div>
+                <button type="button" class="time-scope-step" id="timeScopeNext" aria-label="切换到下一个周期">›</button>
+              </div>
+              <div class="time-scope-switcher" id="timeScopeSwitcher" role="tablist" aria-label="时间范围">
+                <button type="button" class="time-scope-button is-active" role="tab" aria-selected="true" data-time-scope="day">日统计</button>
+                <button type="button" class="time-scope-button" role="tab" aria-selected="false" data-time-scope="week">周统计</button>
+                <button type="button" class="time-scope-button" role="tab" aria-selected="false" data-time-scope="month">月统计</button>
+                <button type="button" class="time-scope-custom" role="tab" aria-selected="false" data-time-scope="custom">自定义</button>
+              </div>
             </div>
-            <label class="date-card" for="datePicker">
-              <span id="dateCardLabel" class="date-card-label"></span>
-              <strong id="todayLabel"></strong>
-              <input id="datePicker" type="date" aria-label="" />
-            </label>
           </div>
-          <div class="hero-summary" id="heroSummary"></div>
         </header>
+
+        <section class="generation-state" id="generationState" aria-live="polite">
+          <div class="generation-state-card">
+            <button type="button" class="generation-button" id="generateNowButton">开始生成</button>
+          </div>
+        </section>
 
         <div class="dashboard-grid">
           <section class="panel panel-overview" id="overviewSection">
@@ -121,13 +126,7 @@
           </section>
         </div>
 
-        <section class="page-panel" id="tablePage" hidden aria-label="全量客户与商机表">
-          <div class="page-panel-header">
-            <div>
-              <p class="eyebrow">页面 TAB</p>
-              <h2 id="crmFullTitle">全量客户与商机表</h2>
-            </div>
-          </div>
+        <section class="page-panel" id="tablePage" aria-label="全量客户与商机表">
           <div class="table-wrap">
             <table>
               <thead>
@@ -138,16 +137,54 @@
           </div>
         </section>
 
-        <section class="page-panel" id="activityPage" hidden aria-label="销售动态">
-          <div class="page-panel-header">
-            <div>
-              <p class="eyebrow">页面 TAB</p>
-              <h2 id="salesActivityTitle">销售动态</h2>
-            </div>
+        <section class="page-panel" id="activityPage" aria-label="销售动态">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr id="salesActivityHead"></tr>
+              </thead>
+              <tbody id="salesActivityFeed" aria-live="polite"></tbody>
+            </table>
           </div>
-          <div id="salesActivityFeed" class="activity-feed" aria-live="polite"></div>
         </section>
       </main>
+    </div>
+
+    <div class="date-range-modal" id="customRangeModal" hidden>
+      <div class="date-range-backdrop" id="customRangeBackdrop" aria-hidden="true"></div>
+        <section class="date-range-dialog" id="customRangeDialog" role="dialog" aria-modal="true" aria-labelledby="customRangeTitle">
+          <header class="date-range-dialog-header">
+            <div>
+              <h3 id="customRangeTitle">选择日期范围</h3>
+            </div>
+            <button type="button" class="date-range-close" id="customRangeClose" aria-label="关闭自定义区间">×</button>
+          </header>
+        <div class="date-range-picker" id="customRangePicker">
+          <label class="date-range-field">
+            <span class="date-range-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect x="3.5" y="5" width="17" height="15.5" rx="3.2" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.7" />
+                <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>开始</span>
+            <input id="rangeStartPicker" type="date" aria-label="开始日期" />
+          </label>
+          <label class="date-range-field">
+            <span class="date-range-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <rect x="3.5" y="5" width="17" height="15.5" rx="3.2" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.7" />
+                <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>结束</span>
+            <input id="rangeEndPicker" type="date" aria-label="结束日期" />
+          </label>
+          <div class="date-range-actions">
+            <button type="button" class="date-range-apply" id="applyRangeButton">应用</button>
+          </div>
+        </div>
+      </section>
     </div>
 
         <div class="chat-widget" id="chatWidget">
