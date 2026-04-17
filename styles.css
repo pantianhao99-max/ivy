@@ -351,7 +351,6 @@ body[data-page-view="activity"] .dashboard-grid {
   width: 100%;
   margin: 0;
   padding-top: 0;
-  display: grid;
   gap: 0;
 }
 
@@ -2251,6 +2250,10 @@ tr.stream-reveal {
   --section-accent: #6d7fb3;
 }
 
+#crmSection {
+  display: none !important;
+}
+
 .panel-header {
   display: flex;
   align-items: start;
@@ -2274,11 +2277,18 @@ tr.stream-reveal {
 
 .panel-heading-prose.card-markdown h2::before {
   content: "";
-  width: 12px;
-  height: 12px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--section-accent) 82%, white);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--section-accent) 14%, white);
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background:
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--section-accent) 96%, white) 0 3px,
+      #ffffff 3.2px 5px,
+      color-mix(in srgb, var(--section-accent) 28%, white) 5.2px 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--section-accent) 48%, white);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--section-accent) 12%, white);
   flex: 0 0 auto;
 }
 
