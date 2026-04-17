@@ -1,5 +1,8 @@
 ﻿const stressMode = new URLSearchParams(window.location.search).has("stress");
 const memberPlaceholderAvatar = "./assets/member-placeholder.png";
+const DASHBOARD_PROMPT_STORAGE_KEY = "sales-dashboard-generation-prompt";
+const DEFAULT_DASHBOARD_GENERATION_PROMPT =
+  "生成一份销售团队看板，突出当前统计周期的新增收入、年度达成、商机推进、重点风险和下一步动作，整体语气专业、简洁、偏经营复盘。";
 if ("scrollRestoration" in history) {
   history.scrollRestoration = "manual";
 }
@@ -492,12 +495,15 @@ let adminAccounts = [
   },
 ];
 
+const ADMIN_ACCOUNT_LIMIT = 8;
+
 const dashboardDocument = {
   title: "销售团队看板",
   ui: {
     rangeStartLabel: "开始日期",
     rangeEndLabel: "结束日期",
-    rangeApplyLabel: "应用",
+      rangeApplyLabel: "确认",
+      rangeCancelLabel: "取消",
     chatFabLabel: "AI",
     chatFabAriaLabel: "打开 AI 助手",
     chatTitle: "AI 助手",
@@ -597,7 +603,7 @@ const dashboardDocument = {
     crm: {
       heading: "客户商机详情",
       intro: "",
-      fullTitle: "商机表",
+      fullTitle: "客户商机表",
       activityTitle: "销售动态",
       tables: [
         {
@@ -633,16 +639,28 @@ let selectedRangeEnd = new Date(today);
 let activeTimeScope = "day";
 let customRangeOpen = false;
 let customRangeTarget = "report";
+let customRangeAllowFallback = true;
 let salesActivitySortDescending = true;
 let salesActivitySearchTerm = "";
 let salesActivityRangeStart = null;
 let salesActivityRangeEnd = null;
 let crmBoardRangeStart = null;
 let crmBoardRangeEnd = null;
-const rangeStartPicker = document.getElementById("rangeStartPicker");
-const rangeEndPicker = document.getElementById("rangeEndPicker");
+let crmBoardDraftRangeStart = null;
+let crmBoardDraftRangeEnd = null;
+let crmBoardPickerMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+const clearRangeButton = document.getElementById("clearRangeButton");
+const cancelRangeButton = document.getElementById("cancelRangeButton");
 const applyRangeButton = document.getElementById("applyRangeButton");
+const boardRangePicker = document.getElementById("boardRangePicker");
+const customRangeTitle = document.getElementById("customRangeTitle");
+const boardRangeMonthLabel = document.getElementById("boardRangeMonthLabel");
+const boardRangeWeekdays = document.getElementById("boardRangeWeekdays");
+const boardRangeGrid = document.getElementById("boardRangeGrid");
+const boardRangePrevMonth = document.getElementById("boardRangePrevMonth");
+const boardRangeNextMonth = document.getElementById("boardRangeNextMonth");
 const customRangeModal = document.getElementById("customRangeModal");
+const customRangeDialog = document.getElementById("customRangeDialog");
 const customRangeBackdrop = document.getElementById("customRangeBackdrop");
 const customRangeCloseButton = document.getElementById("customRangeClose");
 const customRangeButton = document.querySelector('[data-time-scope="custom"]');
@@ -650,6 +668,17 @@ const timeScopeSwitcher = document.getElementById("timeScopeSwitcher");
 const timeScopePrevButton = document.getElementById("timeScopePrev");
 const timeScopeNextButton = document.getElementById("timeScopeNext");
 const timeScopeButtons = document.querySelectorAll("[data-time-scope]");
+const promptSettingsButton = document.getElementById("promptSettingsButton");
+const promptMoreButton = document.getElementById("promptMoreButton");
+const promptMoreMenu = document.getElementById("promptMoreMenu");
+const exportWordButton = document.getElementById("exportWordButton");
+const regeneratePageButton = document.getElementById("regeneratePageButton");
+const promptSettingsModal = document.getElementById("promptSettingsModal");
+const promptSettingsBackdrop = document.getElementById("promptSettingsBackdrop");
+const promptSettingsClose = document.getElementById("promptSettingsClose");
+const promptSettingsInput = document.getElementById("promptSettingsInput");
+const promptSettingsCancel = document.getElementById("promptSettingsCancel");
+const promptSettingsSave = document.getElementById("promptSettingsSave");
 const periodNote = document.getElementById("periodNote");
 const overviewHeading = document.getElementById("overviewHeading");
 const memberHeading = document.getElementById("memberHeading");
@@ -676,13 +705,11 @@ const crmFullHead = document.getElementById("crmFullHead");
 const crmFullTableBody = document.getElementById("crmFullTableBody");
 const crmBoardSortButton = document.getElementById("crmBoardSortButton");
 const crmBoardSearchInput = document.getElementById("crmBoardSearchInput");
-const crmBoardFilterButton = document.getElementById("crmBoardFilterButton");
 const crmBoardMoreButton = document.getElementById("crmBoardMoreButton");
 const crmBoardDateButton = document.getElementById("crmBoardDateButton");
 const salesActivitySortButton = document.getElementById("salesActivitySortButton");
 const salesActivityDateButton = document.getElementById("salesActivityDateButton");
 const salesActivitySearchInput = document.getElementById("salesActivitySearchInput");
-const salesActivityFilterButton = document.getElementById("salesActivityFilterButton");
 const salesActivityMoreButton = document.getElementById("salesActivityMoreButton");
 const salesActivityFeed = document.getElementById("salesActivityFeed");
 const salesActivityHead = document.getElementById("salesActivityHead");
@@ -690,18 +717,20 @@ const adminPanelButton = document.getElementById("adminPanelButton");
 const adminModal = document.getElementById("adminModal");
 const adminModalBackdrop = document.getElementById("adminModalBackdrop");
 const adminModalClose = document.getElementById("adminModalClose");
-const adminRefreshButton = document.getElementById("adminRefreshButton");
 const adminTableBody = document.getElementById("adminTableBody");
 const adminAccountSummary = document.getElementById("adminAccountSummary");
+const adminAddUserButton = document.getElementById("adminAddUserButton");
 const adminEditModal = document.getElementById("adminEditModal");
 const adminEditBackdrop = document.getElementById("adminEditBackdrop");
 const adminEditClose = document.getElementById("adminEditClose");
-const adminEditSummary = document.getElementById("adminEditSummary");
+const adminEditTitle = document.getElementById("adminEditTitle");
 const adminEditTypeGroup = document.getElementById("adminEditTypeGroup");
+const adminEditUsernameInput = document.getElementById("adminEditUsernameInput");
 const adminEditContactInput = document.getElementById("adminEditContactInput");
 const adminSendInviteButton = document.getElementById("adminSendInviteButton");
 const adminInviteHint = document.getElementById("adminInviteHint");
 const adminInviteCodeInput = document.getElementById("adminInviteCodeInput");
+const adminEditDeleteButton = document.getElementById("adminEditDeleteButton");
 const adminEditCancelButton = document.getElementById("adminEditCancelButton");
 const adminEditConfirmButton = document.getElementById("adminEditConfirmButton");
 const chatMessages = document.getElementById("chatMessages");
@@ -725,11 +754,16 @@ let crmBoardSortDescending = true;
 let crmBoardSearchTerm = "";
 let adminModalOpen = false;
 let adminEditModalOpen = false;
+let promptSettingsOpen = false;
+let promptMoreOpen = false;
+let adminEditMode = "edit";
 let adminEditingAccountId = "";
 let adminEditContactType = "phone";
 let adminEditDraftContactValue = "";
+let adminEditDraftUsernameValue = "";
 let adminEditGeneratedCode = "";
 let adminEditInviteSent = false;
+let dashboardGenerationPrompt = "";
 
 const streamRevealQueue = [];
 let streamRevealCounter = 0;
@@ -929,6 +963,71 @@ function getScopeLabel(scope) {
     return "自定义区间";
   }
   return "今日";
+}
+
+function isSameRange(left, right) {
+  return (
+    left &&
+    right &&
+    formatDateInputValue(left.start) === formatDateInputValue(right.start) &&
+    formatDateInputValue(left.end) === formatDateInputValue(right.end)
+  );
+}
+
+function getScopeDisplayLabel(scope) {
+  if (scope === "custom") {
+    return "自定义区间";
+  }
+
+  const currentRange = getCurrentRange();
+
+  if (scope === "day") {
+    const dayDiff = Math.round((currentRange.start - getScopeRangeForDate(today, "day").start) / 86400000);
+    if (dayDiff === 0) {
+      return "今日";
+    }
+    if (dayDiff === -1) {
+      return "昨天";
+    }
+    if (dayDiff === 1) {
+      return "明天";
+    }
+    return "";
+  }
+
+  const todayRange = getScopeRangeForDate(today, scope);
+
+  if (scope === "week") {
+    const diffWeeks = Math.round((currentRange.start - todayRange.start) / 86400000 / 7);
+    if (diffWeeks === 0) {
+      return "本周";
+    }
+    if (diffWeeks === -1) {
+      return "上周";
+    }
+    if (diffWeeks === 1) {
+      return "下周";
+    }
+    return "";
+  }
+
+  if (scope === "month") {
+    const diffMonths =
+      (currentRange.start.getFullYear() - todayRange.start.getFullYear()) * 12 +
+      (currentRange.start.getMonth() - todayRange.start.getMonth());
+    if (diffMonths === 0) {
+      return "本月";
+    }
+    if (diffMonths === -1) {
+      return "上月";
+    }
+    if (diffMonths === 1) {
+      return "下月";
+    }
+    return "";
+  }
+
+  return getScopeLabel(scope);
 }
 
 function getScopeRevenue(scope) {
@@ -1204,6 +1303,10 @@ function formatDateInputValue(date) {
   )}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+function normalizeDate(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0);
+}
+
 function shiftDate(baseDate, offsetDays) {
   const shifted = new Date(baseDate);
   shifted.setDate(shifted.getDate() + offsetDays);
@@ -1265,13 +1368,92 @@ function applySelectedRange(start, end, scope = "custom") {
 }
 
 function syncRangeInputs() {
-  const startDate = customRangeTarget === "activity" ? salesActivityRangeStart || today : selectedRangeStart;
-  const endDate = customRangeTarget === "activity" ? salesActivityRangeEnd || today : selectedRangeEnd;
-  if (rangeStartPicker) {
-    rangeStartPicker.value = formatDateInputValue(startDate);
+  syncBoardRangePickerState();
+}
+
+function getTargetRange(target) {
+  if (target === "activity") {
+    return { start: salesActivityRangeStart, end: salesActivityRangeEnd };
   }
-  if (rangeEndPicker) {
-    rangeEndPicker.value = formatDateInputValue(endDate);
+  if (target === "board") {
+    return { start: crmBoardRangeStart, end: crmBoardRangeEnd };
+  }
+  return { start: selectedRangeStart, end: selectedRangeEnd };
+}
+
+function syncBoardRangePickerState() {
+  if (!boardRangePicker || !customRangePicker) {
+    return;
+  }
+
+  boardRangePicker.hidden = false;
+  customRangePicker.classList.add("is-board-mode");
+  customRangeDialog?.classList.add("is-board-mode");
+
+  const activeRange = getTargetRange(customRangeTarget);
+  const displayStart = crmBoardDraftRangeStart || (customRangeAllowFallback ? activeRange.start : null);
+  const displayEnd = crmBoardDraftRangeEnd || (customRangeAllowFallback ? activeRange.end : null);
+  if (customRangeTitle) {
+    customRangeTitle.textContent = displayStart
+      ? displayEnd
+        ? `日期范围 · ${formatRangeLabel(displayStart, displayEnd)}`
+        : `日期范围 · ${formatShortDateLabel(displayStart)}`
+      : "日期范围";
+  }
+
+  if (boardRangeMonthLabel) {
+    boardRangeMonthLabel.textContent = `${crmBoardPickerMonth.getFullYear()}年${crmBoardPickerMonth.getMonth() + 1}月`;
+  }
+
+  if (boardRangeWeekdays && !boardRangeWeekdays.childElementCount) {
+    ["一", "二", "三", "四", "五", "六", "日"].forEach((day) => {
+      boardRangeWeekdays.appendChild(createElement("span", "", day));
+    });
+  }
+
+  if (!boardRangeGrid) {
+    return;
+  }
+
+  boardRangeGrid.replaceChildren();
+  const monthStart = new Date(crmBoardPickerMonth.getFullYear(), crmBoardPickerMonth.getMonth(), 1);
+  const gridStart = shiftDate(monthStart, -((monthStart.getDay() + 6) % 7));
+  const draftStart = crmBoardDraftRangeStart ? normalizeDate(crmBoardDraftRangeStart) : null;
+  const draftEnd = crmBoardDraftRangeEnd ? normalizeDate(crmBoardDraftRangeEnd) : null;
+
+  for (let index = 0; index < 42; index += 1) {
+    const day = normalizeDate(shiftDate(gridStart, index));
+    const button = createElement("button", "date-range-board-day", String(day.getDate()));
+    button.type = "button";
+    if (day.getMonth() !== crmBoardPickerMonth.getMonth()) {
+      button.classList.add("is-muted");
+    }
+
+    const inRange = draftStart && draftEnd && day >= draftStart && day <= draftEnd;
+    const isEdge =
+      (draftStart && formatDateInputValue(day) === formatDateInputValue(draftStart)) ||
+      (draftEnd && formatDateInputValue(day) === formatDateInputValue(draftEnd));
+
+    if (inRange) {
+      button.classList.add("is-range");
+    }
+    if (isEdge) {
+      button.classList.add("is-edge");
+    }
+
+    button.addEventListener("click", () => {
+      if (!crmBoardDraftRangeStart || (crmBoardDraftRangeStart && crmBoardDraftRangeEnd)) {
+        crmBoardDraftRangeStart = day;
+        crmBoardDraftRangeEnd = null;
+      } else if (day < crmBoardDraftRangeStart) {
+        crmBoardDraftRangeEnd = crmBoardDraftRangeStart;
+        crmBoardDraftRangeStart = day;
+      } else {
+        crmBoardDraftRangeEnd = day;
+      }
+      syncBoardRangePickerState();
+    });
+    boardRangeGrid.appendChild(button);
   }
 }
 
@@ -1282,24 +1464,62 @@ function syncCustomRangeVisibility() {
   customRangeModal.hidden = !customRangeOpen;
 }
 
-function openCustomRangePicker(target = "report") {
+function openCustomRangePicker(target = "report", options = {}) {
   if (!customRangeModal) {
     return;
   }
 
+  const { fresh = false } = options;
   customRangeTarget = target;
+  customRangeAllowFallback = !(target === "report" && fresh);
+  const activeRange = getTargetRange(target);
+  const shouldResetDraft = target === "report" && fresh;
+  crmBoardDraftRangeStart = shouldResetDraft ? null : activeRange.start ? new Date(activeRange.start) : null;
+  crmBoardDraftRangeEnd = shouldResetDraft ? null : activeRange.end ? new Date(activeRange.end) : null;
+  const referenceDate = crmBoardDraftRangeStart || activeRange.start || today;
+  crmBoardPickerMonth = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1);
   customRangeOpen = true;
   syncRangeInputs();
   syncCustomRangeVisibility();
-  if (rangeStartPicker) {
-    window.setTimeout(() => rangeStartPicker.focus(), 0);
+  if (boardRangeGrid) {
+    window.setTimeout(() => boardRangeGrid.focus?.(), 0);
   }
 }
 
 function closeCustomRangePicker() {
   customRangeOpen = false;
   customRangeTarget = "report";
+  customRangeAllowFallback = true;
   syncCustomRangeVisibility();
+}
+
+function clearSelectedRange() {
+  if (customRangeTarget === "board") {
+    crmBoardRangeStart = null;
+    crmBoardRangeEnd = null;
+    crmBoardDraftRangeStart = null;
+    crmBoardDraftRangeEnd = null;
+    closeCustomRangePicker();
+    syncCrmBoardToolbar();
+    renderCrmFullTable();
+    return;
+  }
+
+  if (customRangeTarget === "activity") {
+    salesActivityRangeStart = null;
+    salesActivityRangeEnd = null;
+    crmBoardDraftRangeStart = null;
+    crmBoardDraftRangeEnd = null;
+    closeCustomRangePicker();
+    syncSalesActivityToolbar();
+    renderSalesActivities();
+    return;
+  }
+
+  crmBoardDraftRangeStart = null;
+  crmBoardDraftRangeEnd = null;
+  closeCustomRangePicker();
+  setTimeScope("day");
 }
 
 function syncAdminModalVisibility() {
@@ -1307,6 +1527,108 @@ function syncAdminModalVisibility() {
     return;
   }
   adminModal.hidden = !adminModalOpen;
+}
+
+function syncPromptSettingsVisibility() {
+  if (!promptSettingsModal) {
+    return;
+  }
+  promptSettingsModal.hidden = !promptSettingsOpen;
+}
+
+function syncPromptMoreVisibility() {
+  if (!promptMoreMenu || !promptMoreButton) {
+    return;
+  }
+  promptMoreMenu.hidden = !promptMoreOpen;
+  promptMoreButton.setAttribute("aria-expanded", String(promptMoreOpen));
+}
+
+function loadDashboardGenerationPrompt() {
+  try {
+    dashboardGenerationPrompt =
+      window.localStorage.getItem(DASHBOARD_PROMPT_STORAGE_KEY) || DEFAULT_DASHBOARD_GENERATION_PROMPT;
+  } catch {
+    dashboardGenerationPrompt = DEFAULT_DASHBOARD_GENERATION_PROMPT;
+  }
+}
+
+function saveDashboardGenerationPrompt(value) {
+  dashboardGenerationPrompt = value.trim();
+  try {
+    if (dashboardGenerationPrompt) {
+      window.localStorage.setItem(DASHBOARD_PROMPT_STORAGE_KEY, dashboardGenerationPrompt);
+    } else {
+      window.localStorage.removeItem(DASHBOARD_PROMPT_STORAGE_KEY);
+    }
+  } catch {
+    // Ignore local storage failures.
+  }
+}
+
+function openPromptSettingsModal() {
+  if (!promptSettingsModal) {
+    return;
+  }
+  promptMoreOpen = false;
+  syncPromptMoreVisibility();
+  promptSettingsOpen = true;
+  syncPromptSettingsVisibility();
+  if (promptSettingsInput) {
+    promptSettingsInput.value = dashboardGenerationPrompt;
+    window.setTimeout(() => promptSettingsInput.focus(), 0);
+  }
+}
+
+function closePromptSettingsModal() {
+  promptSettingsOpen = false;
+  syncPromptSettingsVisibility();
+}
+
+function togglePromptMoreMenu(forceOpen = null) {
+  promptMoreOpen = typeof forceOpen === "boolean" ? forceOpen : !promptMoreOpen;
+  syncPromptMoreVisibility();
+}
+
+function confirmPromptSettings() {
+  const nextPrompt = promptSettingsInput?.value || "";
+  const previousPrompt = dashboardGenerationPrompt;
+  saveDashboardGenerationPrompt(nextPrompt);
+  closePromptSettingsModal();
+  if (dashboardGenerationPrompt !== previousPrompt) {
+    invalidateDashboardGeneration();
+  }
+}
+
+function exportDashboardAsWord() {
+  const currentRange = getCurrentRange();
+  const comparisonRange = getComparisonRange();
+  const title = `销售团队看板 ${getRangeLabel(currentRange.start, currentRange.end)}`;
+  const content = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:w="urn:schemas-microsoft-com:office:word"
+          xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="utf-8">
+        <title>${title}</title>
+      </head>
+      <body>
+        <h1>${title}</h1>
+        <p>统计周期：${getRangeLabel(currentRange.start, currentRange.end)}</p>
+        <p>对比周期：${getRangeLabel(comparisonRange.start, comparisonRange.end)}</p>
+        <p>生成提示词：${dashboardGenerationPrompt || DEFAULT_DASHBOARD_GENERATION_PROMPT}</p>
+      </body>
+    </html>
+  `;
+  const blob = new Blob(["\ufeff", content], { type: "application/msword" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `${title}.doc`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
 }
 
 function syncAdminEditModalVisibility() {
@@ -1318,6 +1640,10 @@ function syncAdminEditModalVisibility() {
 
 function getAdminAccountById(accountId) {
   return adminAccounts.find((account) => account.id === accountId) || null;
+}
+
+function canCreateAdminAccount() {
+  return adminAccounts.length < ADMIN_ACCOUNT_LIMIT;
 }
 
 function getAdminContactLabel(type) {
@@ -1346,42 +1672,55 @@ function updateAdminEditTypeButtons() {
     return;
   }
 
-  const buttons = adminEditTypeGroup.querySelectorAll("[data-contact-type]");
-  buttons.forEach((button) => {
-    const isActive = (button.dataset.contactType || "phone") === adminEditContactType;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
+  const radios = adminEditTypeGroup.querySelectorAll('input[name="admin-edit-contact-type"]');
+  radios.forEach((radio) => {
+    radio.checked = radio.value === adminEditContactType;
   });
 }
 
 function renderAdminEditModal() {
-  const account = getAdminAccountById(adminEditingAccountId);
-  if (!account || !adminEditSummary || !adminEditContactInput || !adminInviteCodeInput) {
+  const account = adminEditMode === "edit" ? getAdminAccountById(adminEditingAccountId) : null;
+  if (
+    !adminEditContactInput ||
+    !adminInviteCodeInput ||
+    !adminEditUsernameInput
+  ) {
     return;
   }
 
-  adminEditSummary.textContent = `${account.name} · ${account.username} · ${formatAdminContact(account)}`;
+  if (adminEditTitle) {
+    adminEditTitle.textContent = adminEditMode === "create" ? "新增用户" : "修改用户";
+  }
+
+  adminEditUsernameInput.value = adminEditDraftUsernameValue;
   adminEditContactInput.placeholder = adminEditContactType === "email" ? "输入邮箱" : "输入手机号";
   adminEditContactInput.value = adminEditDraftContactValue;
   if (!adminEditInviteSent) {
     adminInviteCodeInput.value = "";
-    if (adminInviteHint) {
-      adminInviteHint.textContent = "先填写新的手机号或邮箱，再发送邀请码";
+    if (adminInviteHint && !adminInviteHint.dataset.locked) {
+      adminInviteHint.textContent = "";
     }
   } else if (adminInviteHint) {
-    adminInviteHint.textContent = `邀请码已发送：${adminEditGeneratedCode}`;
+    adminInviteHint.textContent = `验证码已发送：${adminEditGeneratedCode}`;
   }
 
   updateAdminEditTypeButtons();
 
   if (adminSendInviteButton) {
-    adminSendInviteButton.textContent = adminEditInviteSent ? "重新发送" : "发送邀请码";
+    adminSendInviteButton.textContent = adminEditInviteSent ? "重新发送" : "发送验证码";
   }
 
   if (adminEditConfirmButton) {
     const isCodeMatch = adminEditInviteSent && adminInviteCodeInput.value.trim() === adminEditGeneratedCode;
     const isContactValid = isValidAdminContact(adminEditContactType, adminEditContactInput.value);
-    adminEditConfirmButton.disabled = !(isCodeMatch && isContactValid);
+    const isUsernameValid = adminEditUsernameInput.value.trim().length > 0;
+    adminEditConfirmButton.disabled = !(isCodeMatch && isContactValid && isUsernameValid);
+    adminEditConfirmButton.textContent = adminEditMode === "create" ? "完成注册" : "确认修改";
+  }
+
+  if (adminEditDeleteButton) {
+    adminEditDeleteButton.hidden = adminEditMode === "create";
+    adminEditDeleteButton.disabled = adminEditMode === "create" || !account;
   }
 }
 
@@ -1391,11 +1730,16 @@ function openAdminEditModal(accountId) {
     return;
   }
 
+  adminEditMode = "edit";
   adminEditingAccountId = account.id;
   adminEditContactType = account.contactType || "phone";
   adminEditDraftContactValue = account.contactValue;
+  adminEditDraftUsernameValue = account.username || "";
   adminEditGeneratedCode = "";
   adminEditInviteSent = false;
+  if (adminInviteHint) {
+    delete adminInviteHint.dataset.locked;
+  }
   adminEditModalOpen = true;
   syncAdminEditModalVisibility();
   renderAdminEditModal();
@@ -1406,18 +1750,61 @@ function openAdminEditModal(accountId) {
   }, 0);
 }
 
-function closeAdminEditModal() {
-  adminEditModalOpen = false;
+function openAdminCreateModal() {
+  if (!adminEditModal || !canCreateAdminAccount()) {
+    return;
+  }
+
+  adminEditMode = "create";
   adminEditingAccountId = "";
+  adminEditContactType = "phone";
   adminEditDraftContactValue = "";
+  adminEditDraftUsernameValue = "";
   adminEditGeneratedCode = "";
   adminEditInviteSent = false;
+  if (adminInviteHint) {
+    delete adminInviteHint.dataset.locked;
+    adminInviteHint.textContent = "";
+  }
+  adminEditModalOpen = true;
+  syncAdminEditModalVisibility();
+  renderAdminEditModal();
+  window.setTimeout(() => {
+    adminEditClose?.focus();
+    adminEditUsernameInput?.focus();
+  }, 0);
+}
+
+function closeAdminEditModal() {
+  adminEditModalOpen = false;
+  adminEditMode = "edit";
+  adminEditingAccountId = "";
+  adminEditDraftContactValue = "";
+  adminEditDraftUsernameValue = "";
+  adminEditGeneratedCode = "";
+  adminEditInviteSent = false;
+  if (adminInviteHint) {
+    delete adminInviteHint.dataset.locked;
+  }
   syncAdminEditModalVisibility();
 }
 
-function sendAdminInviteCode() {
+function deleteActiveAdminAccount() {
   const account = getAdminAccountById(adminEditingAccountId);
-  if (!account || !adminEditContactInput || !adminInviteHint) {
+  if (!account) {
+    return;
+  }
+
+  const confirmed = window.confirm(`确认删除用户 ${account.username} 吗？`);
+  if (!confirmed) {
+    return;
+  }
+
+  deleteAdminAccount(account.id);
+}
+
+function sendAdminInviteCode() {
+  if (!adminEditContactInput || !adminInviteHint) {
     return;
   }
 
@@ -1432,39 +1819,80 @@ function sendAdminInviteCode() {
   adminEditInviteSent = true;
   adminEditDraftContactValue = value;
   adminInviteCodeInput.value = "";
-  adminInviteHint.textContent = `邀请码已发送：${adminEditGeneratedCode}`;
+  adminInviteHint.textContent = `验证码已发送：${adminEditGeneratedCode}`;
   renderAdminEditModal();
   adminInviteCodeInput?.focus();
 }
 
 function confirmAdminEdit() {
-  const account = getAdminAccountById(adminEditingAccountId);
-  if (!account || !adminEditContactInput || !adminInviteCodeInput || !adminInviteHint) {
+  const account = adminEditMode === "edit" ? getAdminAccountById(adminEditingAccountId) : null;
+  if (
+    !adminEditUsernameInput ||
+    !adminEditContactInput ||
+    !adminInviteCodeInput ||
+    !adminInviteHint
+  ) {
     return;
   }
 
+  const username = adminEditUsernameInput.value.trim();
   const value = adminEditContactInput.value.trim();
   const inviteCode = adminInviteCodeInput.value.trim();
 
+  if (!username) {
+    adminInviteHint.dataset.locked = "1";
+    adminInviteHint.textContent = "请输入用户名";
+    return;
+  }
+
   if (!isValidAdminContact(adminEditContactType, value)) {
+    adminInviteHint.dataset.locked = "1";
     adminInviteHint.textContent =
       adminEditContactType === "email" ? "请输入正确的邮箱地址" : "请输入 11 位手机号";
     return;
   }
 
   if (!adminEditInviteSent) {
-    adminInviteHint.textContent = "请先发送邀请码";
+    adminInviteHint.dataset.locked = "1";
+    adminInviteHint.textContent = "请先发送验证码";
     return;
   }
 
   if (inviteCode !== adminEditGeneratedCode) {
-    adminInviteHint.textContent = "邀请码不正确";
+    adminInviteHint.dataset.locked = "1";
+    adminInviteHint.textContent = "验证码不正确";
     return;
   }
 
-  account.contactType = adminEditContactType;
-  account.contactValue = value;
-  account.lastActive = "刚刚";
+  if (adminEditMode === "create") {
+    if (!canCreateAdminAccount()) {
+      adminInviteHint.dataset.locked = "1";
+      adminInviteHint.textContent = "已达到用户上限";
+      return;
+    }
+
+    adminAccounts = [
+      {
+        id: `user-${Date.now()}`,
+        name: username,
+        username,
+        contactType: adminEditContactType,
+        contactValue: value,
+        points: 0,
+        lastActive: "刚刚",
+      },
+      ...adminAccounts,
+    ];
+  } else if (account) {
+    account.username = username;
+    account.contactType = adminEditContactType;
+    account.contactValue = value;
+    account.lastActive = "刚刚";
+  } else {
+    return;
+  }
+
+  delete adminInviteHint.dataset.locked;
   renderAdminTable();
   closeAdminEditModal();
 }
@@ -1475,7 +1903,7 @@ function deleteAdminAccount(accountId) {
     return;
   }
 
-  const confirmed = window.confirm(`确认删除账号 ${account.name} 吗？`);
+  const confirmed = window.confirm(`确认删除用户 ${account.username} 吗？`);
   if (!confirmed) {
     return;
   }
@@ -1511,8 +1939,14 @@ function renderAdminTable() {
   }
 
   const totalPoints = adminAccounts.reduce((sum, account) => sum + account.points, 0);
+  const remainingSlots = Math.max(ADMIN_ACCOUNT_LIMIT - adminAccounts.length, 0);
   if (adminAccountSummary) {
-    adminAccountSummary.textContent = `${adminAccounts.length} 个账号 · 总积分 ${totalPoints.toLocaleString("zh-CN")}`;
+    adminAccountSummary.textContent = `${adminAccounts.length}/${ADMIN_ACCOUNT_LIMIT} 个用户 · 剩余名额 ${remainingSlots} · 总剩余积分 ${totalPoints.toLocaleString("zh-CN")}`;
+  }
+
+  if (adminAddUserButton) {
+    adminAddUserButton.disabled = remainingSlots === 0;
+    adminAddUserButton.textContent = remainingSlots === 0 ? "名额已满" : "新增用户";
   }
 
   adminTableBody.replaceChildren();
@@ -1521,20 +1955,14 @@ function renderAdminTable() {
     const row = document.createElement("tr");
 
     const accountCell = createElement("td");
-    const accountButton = createElement("button", "admin-account-link", account.name);
+    const accountButton = createElement("button", "admin-account-link", account.username);
     accountButton.type = "button";
     accountButton.dataset.accountId = account.id;
     accountButton.dataset.adminAction = "edit";
-    accountCell.append(
-      accountButton,
-      createElement("div", "admin-account-meta", "点击修改手机号 / 邮箱")
-    );
+    accountCell.append(accountButton);
 
     const contactCell = createElement("td");
     contactCell.appendChild(createElement("div", "admin-account-contact", formatAdminContact(account)));
-
-    const usernameCell = createElement("td");
-    usernameCell.appendChild(createElement("div", "admin-account-username", account.username));
 
     const pointsCell = createElement("td");
     pointsCell.appendChild(createElement("div", "admin-points", account.points.toLocaleString("zh-CN")));
@@ -1543,13 +1971,15 @@ function renderAdminTable() {
     lastActiveCell.appendChild(createElement("div", "admin-account-meta", account.lastActive));
 
     const actionCell = createElement("td");
-    const deleteButton = createElement("button", "admin-row-action is-danger", "删除");
-    deleteButton.type = "button";
-    deleteButton.dataset.adminAction = "delete";
-    deleteButton.dataset.accountId = account.id;
-    actionCell.appendChild(deleteButton);
+    const actionWrap = createElement("div", "admin-row-actions");
+    const editButton = createElement("button", "admin-row-action", "修改");
+    editButton.type = "button";
+    editButton.dataset.adminAction = "edit";
+    editButton.dataset.accountId = account.id;
+    actionWrap.append(editButton);
+    actionCell.appendChild(actionWrap);
 
-    row.append(accountCell, contactCell, usernameCell, pointsCell, lastActiveCell, actionCell);
+    row.append(accountCell, contactCell, pointsCell, lastActiveCell, actionCell);
     adminTableBody.appendChild(row);
   });
 }
@@ -1585,16 +2015,12 @@ function renderPageDocument() {
     "panel-heading-prose card-markdown"
   );
 
-  if (rangeStartPicker) {
-    rangeStartPicker.setAttribute("aria-label", dashboardDocument.ui.rangeStartLabel);
-  }
-
-  if (rangeEndPicker) {
-    rangeEndPicker.setAttribute("aria-label", dashboardDocument.ui.rangeEndLabel);
-  }
-
   if (applyRangeButton) {
     applyRangeButton.textContent = dashboardDocument.ui.rangeApplyLabel;
+  }
+
+  if (cancelRangeButton) {
+    cancelRangeButton.textContent = dashboardDocument.ui.rangeCancelLabel;
   }
 
   if (chatToggle) {
@@ -1647,12 +2073,6 @@ function setupCrmBoardControls() {
     crmBoardSearchInput.addEventListener("input", () => {
       crmBoardSearchTerm = crmBoardSearchInput.value || "";
       renderCrmFullTable();
-    });
-  }
-
-  if (crmBoardFilterButton) {
-    crmBoardFilterButton.addEventListener("click", () => {
-      crmBoardSearchInput?.focus();
     });
   }
 
@@ -1730,8 +2150,15 @@ function renderHero() {
   const currentRange = getCurrentRange();
   const currentRangeLabel = getRangeLabel(currentRange.start, currentRange.end);
   if (periodNote) {
+    const scopeDisplayLabel = getScopeDisplayLabel(activeTimeScope);
     periodNote.textContent =
-      activeTimeScope === "day" ? currentRangeLabel : `${getScopeLabel(activeTimeScope)} ${currentRangeLabel}`;
+      activeTimeScope === "day"
+        ? scopeDisplayLabel
+          ? `${scopeDisplayLabel} ${currentRangeLabel}`
+          : currentRangeLabel
+        : scopeDisplayLabel
+          ? `${scopeDisplayLabel} ${currentRangeLabel}`
+          : currentRangeLabel;
   }
   syncTimeScopeState(activeTimeScope);
 }
@@ -1989,7 +2416,7 @@ function answerQuestion(question) {
   }
 
   if (q.includes("\u62a5\u544a") || q.includes("\u603b\u7ed3") || q.includes("\u6c47\u62a5")) {
-    return `${getScopeLabel(activeTimeScope)}（${getRangeLabel(
+    return `${getScopeDisplayLabel(activeTimeScope)}（${getRangeLabel(
       getCurrentRange().start,
       getCurrentRange().end
     )}）\uff0c\u5bf9\u6bd4 ${getComparisonLabel()}\uff0c\u5e74\u5ea6\u76ee\u6807 ${formatCompactCurrency(
@@ -2019,7 +2446,7 @@ function answerQuestion(question) {
   }
 
   if (q.includes("\u65b0\u589e\u6536\u5165") || q.includes("\u6536\u5165")) {
-    return `\u5f53\u524d${getScopeLabel(activeTimeScope)}\u65b0\u589e\u6536\u5165 ${formatCompactCurrency(
+    return `\u5f53\u524d${getScopeDisplayLabel(activeTimeScope)}\u65b0\u589e\u6536\u5165 ${formatCompactCurrency(
       getCurrentRevenue()
     )}\uff0c\u540c\u65f6\u53ef\u53c2\u8003\u4eca\u65e5 ${formatCompactCurrency(
       reportContext.revenueToday
@@ -2558,16 +2985,16 @@ function setupAdminPanel() {
     adminPanelButton.addEventListener("click", openAdminModal);
   }
 
+  if (adminAddUserButton) {
+    adminAddUserButton.addEventListener("click", openAdminCreateModal);
+  }
+
   if (adminModalBackdrop) {
     adminModalBackdrop.addEventListener("click", closeAdminModal);
   }
 
   if (adminModalClose) {
     adminModalClose.addEventListener("click", closeAdminModal);
-  }
-
-  if (adminRefreshButton) {
-    adminRefreshButton.addEventListener("click", renderAdminTable);
   }
 
   if (adminEditBackdrop) {
@@ -2582,14 +3009,18 @@ function setupAdminPanel() {
     adminEditCancelButton.addEventListener("click", closeAdminEditModal);
   }
 
+  if (adminEditDeleteButton) {
+    adminEditDeleteButton.addEventListener("click", deleteActiveAdminAccount);
+  }
+
   if (adminEditTypeGroup) {
-    adminEditTypeGroup.addEventListener("click", (event) => {
-      const button = event.target.closest("[data-contact-type]");
-      if (!button) {
+    adminEditTypeGroup.addEventListener("change", (event) => {
+      const input = event.target.closest('input[name="admin-edit-contact-type"]');
+      if (!input) {
         return;
       }
 
-      const nextType = button.dataset.contactType || "phone";
+      const nextType = input.value || "phone";
       if (nextType === adminEditContactType) {
         return;
       }
@@ -2598,20 +3029,36 @@ function setupAdminPanel() {
       adminEditInviteSent = false;
       adminEditGeneratedCode = "";
       adminEditDraftContactValue = "";
+      if (adminInviteHint) {
+        delete adminInviteHint.dataset.locked;
+        adminInviteHint.textContent = "";
+      }
       if (adminInviteCodeInput) {
         adminInviteCodeInput.value = "";
-      }
-      if (adminEditContactInput) {
-        adminEditContactInput.value = "";
       }
       renderAdminEditModal();
       adminEditContactInput?.focus();
     });
   }
 
+  if (adminEditUsernameInput) {
+    adminEditUsernameInput.addEventListener("input", () => {
+      adminEditDraftUsernameValue = adminEditUsernameInput.value;
+      if (adminInviteHint) {
+        delete adminInviteHint.dataset.locked;
+        adminInviteHint.textContent = "";
+      }
+      renderAdminEditModal();
+    });
+  }
+
   if (adminEditContactInput) {
     adminEditContactInput.addEventListener("input", () => {
       adminEditDraftContactValue = adminEditContactInput.value;
+      if (adminInviteHint) {
+        delete adminInviteHint.dataset.locked;
+        adminInviteHint.textContent = "";
+      }
       if (adminEditInviteSent) {
         adminEditInviteSent = false;
         adminEditGeneratedCode = "";
@@ -2619,7 +3066,7 @@ function setupAdminPanel() {
           adminInviteCodeInput.value = "";
         }
         if (adminInviteHint) {
-          adminInviteHint.textContent = "重新填写后再次发送邀请码";
+          adminInviteHint.textContent = "重新填写后再次发送验证码";
         }
       }
       renderAdminEditModal();
@@ -2645,18 +3092,73 @@ function setupAdminPanel() {
         openAdminEditModal(editButton.dataset.accountId || "");
         return;
       }
-
-      const deleteButton = event.target.closest('[data-admin-action="delete"]');
-      if (!deleteButton) {
-        return;
-      }
-
-      deleteAdminAccount(deleteButton.dataset.accountId || "");
     });
   }
 
   syncAdminModalVisibility();
   syncAdminEditModalVisibility();
+}
+
+function setupPromptSettings() {
+  loadDashboardGenerationPrompt();
+  syncPromptSettingsVisibility();
+  syncPromptMoreVisibility();
+
+  if (promptSettingsButton) {
+    promptSettingsButton.addEventListener("click", openPromptSettingsModal);
+  }
+
+  if (promptMoreButton) {
+    promptMoreButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      togglePromptMoreMenu();
+    });
+  }
+
+  if (exportWordButton) {
+    exportWordButton.addEventListener("click", () => {
+      togglePromptMoreMenu(false);
+      exportDashboardAsWord();
+    });
+  }
+
+  if (regeneratePageButton) {
+    regeneratePageButton.addEventListener("click", () => {
+      togglePromptMoreMenu(false);
+      invalidateDashboardGeneration();
+      generateDashboardContent();
+    });
+  }
+
+  if (promptSettingsBackdrop) {
+    promptSettingsBackdrop.addEventListener("click", closePromptSettingsModal);
+  }
+
+  if (promptSettingsClose) {
+    promptSettingsClose.addEventListener("click", closePromptSettingsModal);
+  }
+
+  if (promptSettingsCancel) {
+    promptSettingsCancel.addEventListener("click", closePromptSettingsModal);
+  }
+
+  if (promptSettingsSave) {
+    promptSettingsSave.addEventListener("click", confirmPromptSettings);
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!promptMoreOpen) {
+      return;
+    }
+    const target = event.target;
+    if (
+      target instanceof Node &&
+      (promptMoreButton?.contains(target) || promptMoreMenu?.contains(target))
+    ) {
+      return;
+    }
+    togglePromptMoreMenu(false);
+  });
 }
 
 function initializeDate() {
@@ -2670,8 +3172,7 @@ function initializeDate() {
     button.addEventListener("click", () => {
       const scope = button.dataset.timeScope || "day";
       if (scope === "custom") {
-        setTimeScope(scope);
-        openCustomRangePicker("report");
+        openCustomRangePicker("report", { fresh: activeTimeScope !== "custom" });
         return;
       }
       setTimeScope(scope);
@@ -2692,11 +3193,28 @@ function initializeDate() {
 
   if (applyRangeButton) {
     applyRangeButton.addEventListener("click", () => {
-      if (!rangeStartPicker?.value || !rangeEndPicker?.value) {
+      if (!crmBoardDraftRangeStart || !crmBoardDraftRangeEnd) {
         return;
       }
-      const start = new Date(`${rangeStartPicker.value}T12:00:00`);
-      const end = new Date(`${rangeEndPicker.value}T12:00:00`);
+
+      const start = new Date(crmBoardDraftRangeStart);
+      const end = new Date(crmBoardDraftRangeEnd);
+
+      if (customRangeTarget === "activity") {
+        salesActivityRangeStart = start;
+        salesActivityRangeEnd = end;
+        if (salesActivityRangeEnd < salesActivityRangeStart) {
+          const swap = salesActivityRangeStart;
+          salesActivityRangeStart = salesActivityRangeEnd;
+          salesActivityRangeEnd = swap;
+        }
+        customRangeOpen = false;
+        customRangeTarget = "report";
+        syncCustomRangeVisibility();
+        renderSalesActivities();
+        return;
+      }
+
       if (customRangeTarget === "board") {
         crmBoardRangeStart = start;
         crmBoardRangeEnd = end;
@@ -2712,22 +3230,17 @@ function initializeDate() {
         renderCrmFullTable();
         return;
       }
-      if (customRangeTarget === "activity") {
-        salesActivityRangeStart = start;
-        salesActivityRangeEnd = end;
-        if (salesActivityRangeEnd < salesActivityRangeStart) {
-          const swap = salesActivityRangeStart;
-          salesActivityRangeStart = salesActivityRangeEnd;
-          salesActivityRangeEnd = swap;
-        }
-        customRangeOpen = false;
-        customRangeTarget = "report";
-        syncCustomRangeVisibility();
-        renderSalesActivities();
-        return;
-      }
+
       applySelectedRange(start, end, "custom");
     });
+  }
+
+  if (clearRangeButton) {
+    clearRangeButton.addEventListener("click", clearSelectedRange);
+  }
+
+  if (cancelRangeButton) {
+    cancelRangeButton.addEventListener("click", closeCustomRangePicker);
   }
 
   if (customRangeBackdrop) {
@@ -2738,45 +3251,33 @@ function initializeDate() {
     customRangeCloseButton.addEventListener("click", closeCustomRangePicker);
   }
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      if (adminEditModalOpen) {
-        closeAdminEditModal();
-      } else if (adminModalOpen) {
-        closeAdminModal();
-      } else if (customRangeOpen) {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        if (adminEditModalOpen) {
+          closeAdminEditModal();
+        } else if (promptSettingsOpen) {
+          closePromptSettingsModal();
+        } else if (promptMoreOpen) {
+          togglePromptMoreMenu(false);
+        } else if (adminModalOpen) {
+          closeAdminModal();
+        } else if (customRangeOpen) {
         closeCustomRangePicker();
       }
     }
   });
 
-  if (rangeStartPicker) {
-    rangeStartPicker.addEventListener("click", () => {
-      rangeStartPicker.showPicker?.();
-    });
-    rangeStartPicker.addEventListener("change", () => {
-      if (rangeStartPicker.value && rangeEndPicker?.value) {
-        applySelectedRange(
-          new Date(`${rangeStartPicker.value}T12:00:00`),
-          new Date(`${rangeEndPicker.value}T12:00:00`),
-          "custom"
-        );
-      }
+  if (boardRangePrevMonth) {
+    boardRangePrevMonth.addEventListener("click", () => {
+      crmBoardPickerMonth = new Date(crmBoardPickerMonth.getFullYear(), crmBoardPickerMonth.getMonth() - 1, 1);
+      syncBoardRangePickerState();
     });
   }
 
-  if (rangeEndPicker) {
-    rangeEndPicker.addEventListener("click", () => {
-      rangeEndPicker.showPicker?.();
-    });
-    rangeEndPicker.addEventListener("change", () => {
-      if (rangeStartPicker?.value && rangeEndPicker.value) {
-        applySelectedRange(
-          new Date(`${rangeStartPicker.value}T12:00:00`),
-          new Date(`${rangeEndPicker.value}T12:00:00`),
-          "custom"
-        );
-      }
+  if (boardRangeNextMonth) {
+    boardRangeNextMonth.addEventListener("click", () => {
+      crmBoardPickerMonth = new Date(crmBoardPickerMonth.getFullYear(), crmBoardPickerMonth.getMonth() + 1, 1);
+      syncBoardRangePickerState();
     });
   }
 
@@ -2798,16 +3299,6 @@ function initializeDate() {
   if (salesActivityDateButton) {
     salesActivityDateButton.addEventListener("click", () => {
       openCustomRangePicker("activity");
-    });
-  }
-
-  if (salesActivityFilterButton) {
-    salesActivityFilterButton.addEventListener("click", () => {
-      salesActivitySearchTerm = "";
-      salesActivityRangeStart = null;
-      salesActivityRangeEnd = null;
-      syncSalesActivityToolbar();
-      renderSalesActivities();
     });
   }
 
@@ -2899,7 +3390,7 @@ function setupChat() {
 }
 
 function renderOverviewRichtext() {
-  const scopeLabel = getScopeLabel(activeTimeScope);
+  const scopeLabel = getScopeDisplayLabel(activeTimeScope);
   const currentRange = getCurrentRange();
   const currentRangeLabel = getRangeLabel(currentRange.start, currentRange.end);
   const comparisonRevenue = getComparisonRevenue();
@@ -2985,6 +3476,7 @@ function renderOverviewRichtext() {
 
 function initialize() {
   renderPageDocument();
+  setupPromptSettings();
   initializeDate();
   setupCrmBoardControls();
   setupPageTabs();

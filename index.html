@@ -12,7 +12,7 @@
         <nav class="section-tabs" id="sectionTabs" role="tablist" aria-label="页面切换">
           <div class="section-tabs-inner">
             <button class="section-tab is-active" type="button" role="tab" aria-selected="true" data-page-tab="team">团队看板</button>
-            <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="table">商机表</button>
+            <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="table">客户商机表</button>
             <button class="section-tab" type="button" role="tab" aria-selected="false" data-page-tab="activity">销售动态</button>
             <button class="section-tab section-tab-admin" type="button" id="adminPanelButton" aria-label="打开后台管理">后台</button>
           </div>
@@ -22,17 +22,49 @@
           <div class="hero-top-meta">
             <div class="time-range-toolbar" id="timeRangeToolbar">
               <div class="time-range-meta">
-                <div class="hero-period-note" id="periodNote"></div>
                 <div class="time-scope-nav" id="timeScopeNav">
-                  <button type="button" class="time-scope-step" id="timeScopePrev" aria-label="切换到上一个周期">‹</button>
-                  <button type="button" class="time-scope-step" id="timeScopeNext" aria-label="切换到下一个周期">›</button>
+                  <div class="time-scope-stepper" aria-label="切换周期">
+                    <button type="button" class="time-scope-step" id="timeScopePrev" aria-label="切换到上一个周期">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                        <path d="M7.92175 11.6152C7.74265 11.8868 7.77251 12.256 8.01159 12.4951L14.0116 18.4951C14.285 18.7684 14.7285 18.7684 15.0018 18.4951C15.2752 18.2217 15.2752 17.7782 15.0018 17.5048L9.49694 11.9999L15.0018 6.49506C15.2752 6.2217 15.2752 5.7782 15.0018 5.50483C14.7285 5.23146 14.285 5.23146 14.0116 5.50483L8.01159 11.5048L7.92175 11.6152Z" fill="currentColor"/>
+                      </svg>
+                    </button>
+                    <span class="time-scope-stepper-divider" aria-hidden="true"></span>
+                    <button type="button" class="time-scope-step" id="timeScopeNext" aria-label="切换到下一个周期">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                        <path d="M16.1554 11.6152C16.3345 11.8868 16.3046 12.256 16.0656 12.4951L10.0656 18.4951C9.79219 18.7684 9.34869 18.7684 9.07532 18.4951C8.80196 18.2217 8.80196 17.7782 9.07532 17.5048L14.5802 11.9999L9.07532 6.49506C8.80196 6.2217 8.80196 5.7782 9.07532 5.50483C9.34869 5.23146 9.79219 5.23146 10.0656 5.50483L16.0656 11.5048L16.1554 11.6152Z" fill="currentColor"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
+                <div class="hero-period-note" id="periodNote"></div>
               </div>
-              <div class="time-scope-switcher" id="timeScopeSwitcher" role="tablist" aria-label="时间范围">
-                <button type="button" class="time-scope-button is-active" role="tab" aria-selected="true" data-time-scope="day">日统计</button>
-                <button type="button" class="time-scope-button" role="tab" aria-selected="false" data-time-scope="week">周统计</button>
-                <button type="button" class="time-scope-button" role="tab" aria-selected="false" data-time-scope="month">月统计</button>
-                <button type="button" class="time-scope-custom" role="tab" aria-selected="false" data-time-scope="custom">自定义</button>
+              <div class="time-range-actions">
+                <div class="time-scope-switcher" id="timeScopeSwitcher" role="tablist" aria-label="时间范围">
+                  <button type="button" class="time-scope-button is-active" role="tab" aria-selected="true" data-time-scope="day">日统计</button>
+                  <button type="button" class="time-scope-button" role="tab" aria-selected="false" data-time-scope="week">周统计</button>
+                  <button type="button" class="time-scope-button" role="tab" aria-selected="false" data-time-scope="month">月统计</button>
+                  <button type="button" class="time-scope-custom" role="tab" aria-selected="false" data-time-scope="custom">自定义</button>
+                </div>
+                <button type="button" class="time-range-settings" id="promptSettingsButton" aria-label="打开页面生成提示词设置">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M15.3265 18.7607C15.6838 18.7607 16.0141 18.5701 16.1927 18.2607L19.5189 12.5C19.6975 12.1906 19.6975 11.8094 19.5189 11.5L16.1927 5.73926C16.0141 5.42986 15.6838 5.23926 15.3265 5.23926L8.67415 5.23926C8.31688 5.23926 7.98657 5.42986 7.80794 5.73926L4.48176 11.5C4.30315 11.8094 4.30315 12.1906 4.48176 12.5L7.80794 18.2607C7.98657 18.5701 8.31688 18.7607 8.67415 18.7607L15.3265 18.7607ZM8.67415 19.9609C7.8882 19.9609 7.16188 19.5419 6.76887 18.8613L3.4427 13.0996C3.0499 12.4191 3.0499 11.5809 3.4427 10.9004L6.76887 5.13867C7.16188 4.45805 7.8882 4.03906 8.67415 4.03906L15.3265 4.03906C16.1124 4.03906 16.8388 4.45805 17.2318 5.13867L20.5579 10.9004C20.9507 11.5809 20.9507 12.4191 20.5579 13.0996L17.2318 18.8613C16.8388 19.5419 16.1124 19.9609 15.3265 19.9609L8.67415 19.9609Z" fill="currentColor"/>
+                    <path d="M14.4004 12C14.4004 10.6745 13.3255 9.59961 12 9.59961C10.6745 9.59961 9.59961 10.6745 9.59961 12C9.59961 13.3255 10.6745 14.4004 12 14.4004C13.3255 14.4004 14.4004 13.3255 14.4004 12ZM15.5996 12C15.5996 13.9882 13.9882 15.5996 12 15.5996C10.0118 15.5996 8.40039 13.9882 8.40039 12C8.40039 10.0118 10.0118 8.40039 12 8.40039C13.9882 8.40039 15.5996 10.0118 15.5996 12Z" fill="currentColor"/>
+                  </svg>
+                </button>
+                <div class="time-range-more-wrap">
+                  <button type="button" class="time-range-settings" id="promptMoreButton" aria-label="打开更多操作" aria-expanded="false" aria-controls="promptMoreMenu">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                      <path d="M4.85059 12.0001C4.85059 12.332 4.9824 12.6502 5.21703 12.8848C5.45166 13.1194 5.76988 13.2513 6.1017 13.2513C6.43352 13.2513 6.75174 13.1194 6.98637 12.8848C7.221 12.6502 7.35282 12.332 7.35282 12.0001C7.35282 11.6683 7.221 11.3501 6.98637 11.1155C6.75174 10.8808 6.43352 10.749 6.1017 10.749C5.76988 10.749 5.45166 10.8808 5.21703 11.1155C4.9824 11.3501 4.85059 11.6683 4.85059 12.0001Z" fill="currentColor"/>
+                      <path d="M10.749 12.0001C10.749 12.332 10.8808 12.6502 11.1155 12.8848C11.3501 13.1194 11.6683 13.2513 12.0001 13.2513C12.332 13.2513 12.6502 13.1194 12.8848 12.8848C13.1194 12.6502 13.2513 12.332 13.2513 12.0001C13.2513 11.6683 13.1194 11.3501 12.8848 11.1155C12.6502 10.8808 12.332 10.749 12.0001 10.749C11.6683 10.749 11.3501 10.8808 11.1155 11.1155C10.8808 11.3501 10.749 11.6683 10.749 12.0001Z" fill="currentColor"/>
+                      <path d="M16.6475 12.0001C16.6475 12.332 16.7793 12.6502 17.0139 12.8848C17.2485 13.1194 17.5668 13.2513 17.8986 13.2513C18.2304 13.2513 18.5486 13.1194 18.7832 12.8848C19.0179 12.6502 19.1497 12.332 19.1497 12.0001C19.1497 11.6683 19.0179 11.3501 18.7832 11.1155C18.5486 10.8808 18.2304 10.749 17.8986 10.749C17.5668 10.749 17.2485 10.8808 17.0139 11.1155C16.7793 11.3501 16.6475 11.6683 16.6475 12.0001Z" fill="currentColor"/>
+                    </svg>
+                  </button>
+                  <div class="time-range-more-menu" id="promptMoreMenu" hidden>
+                    <button type="button" class="time-range-more-item" id="exportWordButton">导出 Word</button>
+                    <button type="button" class="time-range-more-item" id="regeneratePageButton">重新生成页面</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -123,7 +155,7 @@
           </section>
         </div>
 
-        <section class="page-panel page-panel-board" id="tablePage" aria-label="全量客户与商机表">
+        <section class="page-panel page-panel-board" id="tablePage" aria-label="客户商机表">
           <div class="crm-board-page">
             <div class="crm-board-toolbar">
               <button type="button" class="crm-board-sort" id="crmBoardSortButton" aria-label="切换更新时间排序">
@@ -132,9 +164,6 @@
               </button>
 
               <div class="crm-board-toolbar-actions">
-                <button type="button" class="crm-board-date" id="crmBoardDateButton" aria-label="选择日期范围">
-                  日期筛选
-                </button>
                 <label class="crm-board-search" for="crmBoardSearchInput">
                   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                     <circle cx="11" cy="11" r="6.2" fill="none" stroke="currentColor" stroke-width="1.7" />
@@ -142,19 +171,16 @@
                   </svg>
                   <input id="crmBoardSearchInput" type="search" placeholder="输入" aria-label="搜索客户或商机" />
                 </label>
-                <button type="button" class="crm-board-filter" id="crmBoardFilterButton" aria-label="筛选">
-                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path
-                      d="M4.5 6h15l-5.8 6.7v4.5l-3.4 1.8v-6.3L4.5 6Z"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.7"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                  <span>筛选</span>
+                <button type="button" class="crm-board-date" id="crmBoardDateButton" aria-label="选择日期范围">
+                  日期筛选
                 </button>
-                <button type="button" class="crm-board-more" id="crmBoardMoreButton" aria-label="更多操作">⋯</button>
+                <button type="button" class="crm-board-more" id="crmBoardMoreButton" aria-label="更多操作">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M4.85059 12.0001C4.85059 12.332 4.9824 12.6502 5.21703 12.8848C5.45166 13.1194 5.76988 13.2513 6.1017 13.2513C6.43352 13.2513 6.75174 13.1194 6.98637 12.8848C7.221 12.6502 7.35282 12.332 7.35282 12.0001C7.35282 11.6683 7.221 11.3501 6.98637 11.1155C6.75174 10.8808 6.43352 10.749 6.1017 10.749C5.76988 10.749 5.45166 10.8808 5.21703 11.1155C4.9824 11.3501 4.85059 11.6683 4.85059 12.0001Z" fill="currentColor"/>
+                    <path d="M10.749 12.0001C10.749 12.332 10.8808 12.6502 11.1155 12.8848C11.3501 13.1194 11.6683 13.2513 12.0001 13.2513C12.332 13.2513 12.6502 13.1194 12.8848 12.8848C13.1194 12.6502 13.2513 12.332 13.2513 12.0001C13.2513 11.6683 13.1194 11.3501 12.8848 11.1155C12.6502 10.8808 12.332 10.749 12.0001 10.749C11.6683 10.749 11.3501 10.8808 11.1155 11.1155C10.8808 11.3501 10.749 11.6683 10.749 12.0001Z" fill="currentColor"/>
+                    <path d="M16.6475 12.0001C16.6475 12.332 16.7793 12.6502 17.0139 12.8848C17.2485 13.1194 17.5668 13.2513 17.8986 13.2513C18.2304 13.2513 18.5486 13.1194 18.7832 12.8848C19.0179 12.6502 19.1497 12.332 19.1497 12.0001C19.1497 11.6683 19.0179 11.3501 18.7832 11.1155C18.5486 10.8808 18.2304 10.749 17.8986 10.749C17.5668 10.749 17.2485 10.8808 17.0139 11.1155C16.7793 11.3501 16.6475 11.6683 16.6475 12.0001Z" fill="currentColor"/>
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -175,9 +201,6 @@
             </button>
 
             <div class="activity-toolbar-actions">
-              <button type="button" class="activity-date" id="salesActivityDateButton" aria-label="选择日期范围">
-                日期筛选
-              </button>
               <label class="activity-search" for="salesActivitySearchInput">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <circle cx="11" cy="11" r="6.2" fill="none" stroke="currentColor" stroke-width="1.7" />
@@ -185,17 +208,8 @@
                 </svg>
                 <input id="salesActivitySearchInput" type="search" placeholder="输入" aria-label="搜索销售动态" />
               </label>
-              <button type="button" class="activity-filter" id="salesActivityFilterButton" aria-label="筛选">
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                  <path
-                    d="M4.5 6h15l-5.8 6.7v4.5l-3.4 1.8v-6.3L4.5 6Z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.7"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                <span>筛选</span>
+              <button type="button" class="activity-date" id="salesActivityDateButton" aria-label="选择日期范围">
+                日期筛选
               </button>
               <button type="button" class="activity-more" id="salesActivityMoreButton" aria-label="更多操作">⋯</button>
             </div>
@@ -223,28 +237,22 @@
             <button type="button" class="date-range-close" id="customRangeClose" aria-label="关闭自定义区间">×</button>
           </header>
         <div class="date-range-picker" id="customRangePicker">
-          <label class="date-range-field">
-            <span class="date-range-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <rect x="3.5" y="5" width="17" height="15.5" rx="3.2" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.7" />
-                <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-              </svg>
-            </span>
-            <span>开始</span>
-            <input id="rangeStartPicker" type="date" aria-label="开始日期" />
-          </label>
-          <label class="date-range-field">
-            <span class="date-range-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <rect x="3.5" y="5" width="17" height="15.5" rx="3.2" ry="3.2" fill="none" stroke="currentColor" stroke-width="1.7" />
-                <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-              </svg>
-            </span>
-            <span>结束</span>
-            <input id="rangeEndPicker" type="date" aria-label="结束日期" />
-          </label>
+          <div class="date-range-board-picker" id="boardRangePicker" hidden>
+            <div class="date-range-board-calendar">
+              <div class="date-range-board-calendar-header">
+                <button type="button" class="date-range-board-nav" id="boardRangePrevMonth" aria-label="上一个月">‹</button>
+                <div class="date-range-board-month" id="boardRangeMonthLabel"></div>
+                <button type="button" class="date-range-board-nav" id="boardRangeNextMonth" aria-label="下一个月">›</button>
+              </div>
+              <div class="date-range-board-weekdays" id="boardRangeWeekdays"></div>
+              <div class="date-range-board-grid" id="boardRangeGrid"></div>
+            </div>
           <div class="date-range-actions">
-            <button type="button" class="date-range-apply" id="applyRangeButton">应用</button>
+            <button type="button" class="date-range-clear" id="clearRangeButton">清空</button>
+            <div class="date-range-actions-right">
+              <button type="button" class="date-range-cancel" id="cancelRangeButton">取消</button>
+              <button type="button" class="date-range-apply" id="applyRangeButton">确认</button>
+            </div>
           </div>
         </div>
       </section>
@@ -254,26 +262,22 @@
       <div class="admin-modal-backdrop" id="adminModalBackdrop" aria-hidden="true"></div>
       <section class="admin-dialog" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
         <header class="admin-dialog-header">
-          <div>
-            <p class="admin-dialog-eyebrow">团队管理</p>
-            <h3 id="adminModalTitle">账号管理</h3>
-          </div>
+          <h3 id="adminModalTitle">用户管理</h3>
           <button type="button" class="admin-dialog-close" id="adminModalClose" aria-label="关闭后台管理">×</button>
         </header>
 
         <div class="admin-dialog-toolbar">
           <div class="admin-dialog-summary" id="adminAccountSummary"></div>
-          <button type="button" class="admin-dialog-action" id="adminRefreshButton">刷新列表</button>
+          <button type="button" class="admin-dialog-action" id="adminAddUserButton">新增用户</button>
         </div>
 
         <div class="admin-table-wrap">
           <table class="admin-table">
             <thead>
               <tr>
-                <th>账号</th>
-                <th>手机/邮箱</th>
                 <th>用户名</th>
-                <th>积分</th>
+                <th>手机号/邮箱号</th>
+                <th>剩余积分</th>
                 <th>最近活跃</th>
                 <th>操作</th>
               </tr>
@@ -288,42 +292,78 @@
       <div class="admin-modal-backdrop" id="adminEditBackdrop" aria-hidden="true"></div>
       <section class="admin-edit-dialog" role="dialog" aria-modal="true" aria-labelledby="adminEditTitle">
         <header class="admin-dialog-header">
-          <div>
-            <p class="admin-dialog-eyebrow">账号修改</p>
-            <h3 id="adminEditTitle">修改手机号 / 邮箱</h3>
+          <div class="admin-edit-header-copy">
+            <h3 id="adminEditTitle">修改用户</h3>
           </div>
           <button type="button" class="admin-dialog-close" id="adminEditClose" aria-label="关闭修改弹窗">×</button>
         </header>
 
-        <div class="admin-edit-summary" id="adminEditSummary"></div>
-
         <div class="admin-edit-form">
           <label class="admin-edit-field">
-            <span>修改类型</span>
-            <div class="admin-edit-segment" id="adminEditTypeGroup" role="radiogroup" aria-label="修改类型">
-              <button type="button" class="admin-edit-segment-button is-active" data-contact-type="phone" aria-pressed="true">手机号</button>
-              <button type="button" class="admin-edit-segment-button" data-contact-type="email" aria-pressed="false">邮箱</button>
+            <span>用户名</span>
+            <input id="adminEditUsernameInput" type="text" placeholder="输入用户名" />
+          </label>
+
+          <fieldset class="admin-edit-field admin-edit-radio-group" id="adminEditTypeGroup">
+            <legend>绑定方式</legend>
+            <label class="admin-edit-radio">
+              <input type="radio" name="admin-edit-contact-type" value="phone" checked />
+              <span>手机号</span>
+            </label>
+            <label class="admin-edit-radio">
+              <input type="radio" name="admin-edit-contact-type" value="email" />
+              <span>邮箱</span>
+            </label>
+          </fieldset>
+
+          <label class="admin-edit-field admin-edit-field-grow">
+            <span>手机号 / 邮箱号</span>
+            <div class="admin-edit-inline-input">
+              <input id="adminEditContactInput" type="text" placeholder="输入手机号或邮箱" />
+              <button type="button" class="admin-edit-primary" id="adminSendInviteButton">发送验证码</button>
             </div>
           </label>
 
-          <label class="admin-edit-field">
-            <span>新手机号 / 邮箱</span>
-            <input id="adminEditContactInput" type="text" placeholder="输入手机号或邮箱" />
-          </label>
-
-          <div class="admin-edit-row">
-            <button type="button" class="admin-edit-primary" id="adminSendInviteButton">发送邀请码</button>
-            <span class="admin-edit-hint" id="adminInviteHint">先填写新手机号或邮箱</span>
+          <div class="admin-edit-row admin-edit-row-stack">
+            <label class="admin-edit-field admin-edit-field-grow">
+              <span>验证码</span>
+              <input id="adminInviteCodeInput" type="text" placeholder="输入 6 位验证码" maxlength="6" />
+            </label>
+            <span class="admin-edit-hint" id="adminInviteHint"></span>
           </div>
 
-          <label class="admin-edit-field">
-            <span>邀请码</span>
-            <input id="adminInviteCodeInput" type="text" placeholder="输入 6 位邀请码" maxlength="6" />
-          </label>
-
           <div class="admin-edit-actions">
-            <button type="button" class="admin-edit-secondary" id="adminEditCancelButton">取消</button>
-            <button type="button" class="admin-edit-primary" id="adminEditConfirmButton">确认修改</button>
+            <button type="button" class="admin-edit-danger" id="adminEditDeleteButton">删除用户</button>
+            <div class="admin-edit-actions-right">
+              <button type="button" class="admin-edit-secondary" id="adminEditCancelButton">取消</button>
+              <button type="button" class="admin-edit-primary" id="adminEditConfirmButton">确认修改</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="prompt-settings-modal" id="promptSettingsModal" hidden>
+      <div class="admin-modal-backdrop" id="promptSettingsBackdrop" aria-hidden="true"></div>
+      <section class="prompt-settings-dialog" role="dialog" aria-modal="true" aria-labelledby="promptSettingsTitle">
+        <header class="admin-dialog-header">
+          <div class="admin-edit-header-copy">
+            <h3 id="promptSettingsTitle">页面生成提示词</h3>
+          </div>
+          <button type="button" class="admin-dialog-close" id="promptSettingsClose" aria-label="关闭页面生成提示词弹窗">×</button>
+        </header>
+
+        <div class="prompt-settings-form">
+          <label class="prompt-settings-field" for="promptSettingsInput">
+            <span>提示词</span>
+            <textarea
+              id="promptSettingsInput"
+              placeholder="例如：生成一份更偏经营复盘风格的销售团队看板，突出新增收入、商机推进和风险预警。"
+            ></textarea>
+          </label>
+          <div class="prompt-settings-actions">
+            <button type="button" class="admin-edit-secondary" id="promptSettingsCancel">取消</button>
+            <button type="button" class="admin-edit-primary" id="promptSettingsSave">保存</button>
           </div>
         </div>
       </section>
