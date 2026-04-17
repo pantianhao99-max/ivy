@@ -458,6 +458,7 @@ body[data-page-view="activity"] .dashboard-grid {
   color: #171717;
   border-radius: 10px;
   height: 34px;
+  width: auto;
   padding: 0 12px;
   display: inline-flex;
   align-items: center;
@@ -476,6 +477,12 @@ body[data-page-view="activity"] .dashboard-grid {
 .crm-board-sort:hover,
 .activity-sort:hover {
   color: #111111;
+}
+
+.crm-board-date,
+.activity-date {
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .crm-board-search,
@@ -517,24 +524,14 @@ body[data-page-view="activity"] .dashboard-grid {
   color: #b0b4bc;
 }
 
-.crm-board-more,
-.activity-more {
-  width: 32px;
-  padding: 0;
-  line-height: 1;
-}
-
 .crm-board-more {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.82);
   border-radius: 10px;
-  width: 34px;
-  height: 34px;
-  font-size: 22px;
-  letter-spacing: 0;
 }
 
-.crm-board-more svg {
+.crm-board-more svg,
+.activity-more svg {
   width: 20px;
   height: 20px;
   display: block;
